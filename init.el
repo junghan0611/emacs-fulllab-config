@@ -81,7 +81,7 @@
 (doom!
  :completion
  (corfu +orderless +icons) ;; +dabbrev - custom dabbrev
- vertico ;; +childframe ; search engine of the future ; +icons
+ (vertico +icons) ;; +childframe ; search engine of the future ; +icons
 
  :ui
  doom              ; what makes DOOM look the way it does

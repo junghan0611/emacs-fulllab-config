@@ -1471,26 +1471,6 @@
        "2" #'citar-denote-open-note
        "3" #'citar-open-entry))
 
-;;;; DONT consult-omni
-
-;; (map!
-;;  :after consult-omni
-;;  (:prefix ("i" . "insert")
-;;           (:map consult-omni-embark-general-actions-map
-;;            :desc "insert-url-link" "u" #'consult-omni-embark-insert-url-link
-;;            :desc "insert-title" "t" #'consult-omni-embark-insert-title
-;;            :desc "my/insert-link" "l" #'my-consult-omni-embark-insert-link
-;;            :desc "my/insert-url" "1" #'my-consult-omni-embark-insert-url
-;;            :desc "my/insert-title" "2" #'my-consult-omni-embark-insert-title
-;;            ))
-;;  (:prefix ("w" . "copy")
-;;           (:map consult-omni-embark-general-actions-map
-;;            :desc "my/copy-url" "1" #'my-consult-omni-embark-copy-url-as-kill
-;;            :desc "my/copy-title" "2" #'my-consult-omni-embark-copy-title-as-kill
-;;            :desc "copy-url" "u" #'consult-omni-embark-copy-url-as-kill
-;;            :desc "copy-title" "t" #'consult-omni-embark-copy-title-as-kill))
-;;  )
-
 ;;;; vertico-map
 
 (map! :map vertico-map

@@ -50,11 +50,6 @@
 
 ;;; doom-unpin-packages
 
-;;; DONT consult-omni consult-gh
-
-(package! consult-omni :recipe (:host github :repo "armindarvish/consult-omni" :files (:defaults "sources/*.el")))
-(package! consult-gh :recipe (:host github :repo "armindarvish/consult-gh" :files ("*")))
-
 ;;; DONT NEVER use built-in on emacs 30
 
 ;; (when (eq emacs-major-version 30)
@@ -156,7 +151,7 @@
 ;; (package! titlecase)
 (package! deadgrep)
 (package! rg) ; ripgrep
-(package! affe)
+;; (package! affe)
 (package! fzf)
 (package! ace-link)
 (package! unfill)
@@ -227,7 +222,7 @@
 
 ;;;; :tools writing
 
-(package! hypothesis :recipe (:host github :repo "EFLS/hypothesis"))
+;; (package! hypothesis :recipe (:host github :repo "EFLS/hypothesis"))
 (package! side-notes)
 (package! redacted)
 (package! centered-cursor-mode)
@@ -450,9 +445,9 @@
 ;; (package! dwim-shell-command)
 ;; (package! bm) ; visible bookmark
 
-(package! hnreader :recipe (:host github :repo "agzam/emacs-hnreader" :branch "major-mode"))
-(package! consult-hn :recipe (:host github :repo "agzam/consult-hn"))
-(package! reddigg :recipe (:host github :repo "agzam/emacs-reddigg" :branch "major-mode"))
+;; (package! hnreader :recipe (:host github :repo "agzam/emacs-hnreader" :branch "major-mode"))
+;; (package! consult-hn :recipe (:host github :repo "agzam/consult-hn"))
+;; (package! reddigg :recipe (:host github :repo "agzam/emacs-reddigg" :branch "major-mode"))
 
 ;; filter marked text out
 (package! org-marked-text-overview :recipe (:host github :repo "lijigang/org-marked-text-overview"))
@@ -507,8 +502,6 @@
 (package! p-search :recipe (:host github :repo "zkry/p-search"))
 
 (package! git-grep-transient)
-
-(package! transient-posframe)
 
 ;;;; Forked PKGs
 

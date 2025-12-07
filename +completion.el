@@ -10,16 +10,16 @@
 ;;;;; vertico-buffer on TOP
 
 ;; vertico-buffer on-top
-;; (progn
-;;   (require 'vertico-buffer)
-;;   (setq vertico-resize 'grow-only) ; doom nil
+(progn
+  (require 'vertico-buffer)
+  (setq vertico-resize 'grow-only) ; doom nil
 
-;;   ;; vertico on Top
-;;   (setq vertico-buffer-display-action
-;;         `(display-buffer-in-side-window
-;;           (window-height . ,(+ 3 vertico-count)) (side . top)))
-;;   (vertico-mode +1)
-;;   (vertico-buffer-mode +1))
+  ;; vertico on Top
+  (setq vertico-buffer-display-action
+        `(display-buffer-in-side-window
+          (window-height . ,(+ 3 vertico-count)) (side . top)))
+  (vertico-mode +1)
+  (vertico-buffer-mode +1))
 
 ;;;;; vertico-multiform
 
@@ -219,7 +219,6 @@ These annotations are skipped for remote paths."
   ;; (setq +corfu-want-tab-prefer-navigating-snippets nil)
   ;; (setq +corfu-want-tab-prefer-navigating-org-tables nil)
 
-  ;; from minemacs
   ;; HACK: Prevent the annoting completion error when no `ispell' dictionary is set, prefer `cape-dict'
   (when (eq emacs-major-version 30)
     (setq text-mode-ispell-word-completion nil))

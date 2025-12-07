@@ -883,12 +883,12 @@
 ;; evil-owl-paste-from-register    Wrapper function for ‘evil-paste-from-register’ that shows a preview popup.
 
 ;; Not sure what is in a register? Have it show you when you hit ~”~ or ~@~
-(use-package! evil-owl
-  :hook (doom-first-input . evil-owl-mode)
-  :config
-  (setq evil-owl-display-method 'window)
-  (setq evil-owl-idle-delay 0.5) ; default 1
-  (setq evil-owl-max-string-length 500))
+;; (use-package! evil-owl
+;;   :hook (doom-first-input . evil-owl-mode)
+;;   :config
+;;   (setq evil-owl-display-method 'window)
+;;   (setq evil-owl-idle-delay 0.5) ; default 1
+;;   (setq evil-owl-max-string-length 500))
 
 ;;;;; smartparens
 
@@ -1200,17 +1200,17 @@ only those in the selected frame."
 
 ;; affe-grep: Filters the content of all text files in the current directory
 ;; affe-find: Filters the file paths of all files in the current directory
-(use-package affe!
-  :defer 5
-  :config
-  ;; (consult-customize affe-grep :preview-key (kbd "M-."))
-  (defvar affe-orderless-regexp "")
-  (defun affe-orderless-regexp-compiler (input _type)
-    (setq affe-orderless-regexp (orderless-pattern-compiler input))
-    (cons affe-orderless-regexp
-          (lambda (str) (orderless--highlight affe-orderless-regexp str))))
-  (setq affe-regexp-compiler #'affe-orderless-regexp-compiler)
-  )
+;; (use-package affe!
+;;   :defer 5
+;;   :config
+;;   ;; (consult-customize affe-grep :preview-key (kbd "M-."))
+;;   (defvar affe-orderless-regexp "")
+;;   (defun affe-orderless-regexp-compiler (input _type)
+;;     (setq affe-orderless-regexp (orderless-pattern-compiler input))
+;;     (cons affe-orderless-regexp
+;;           (lambda (str) (orderless--highlight affe-orderless-regexp str))))
+;;   (setq affe-regexp-compiler #'affe-orderless-regexp-compiler)
+;;   )
 
 ;;;;; fzf fuzzy find
 
@@ -1765,18 +1765,18 @@ only those in the selected frame."
 ;; them into a temporary org-mode buffer. M-x hypothesis-to-archive
 ;; imports notations into hypothesis-archive. It will import up to 200
 ;; notations but will only import notations made after the last import.
-(use-package! hypothesis
-  :defer 5
-  :commands hypothesis-to-org hypothesis-to-archive
-  :config
-  (setq hypothesis-username user-hypothesis-username)
-  (setq hypothesis-token user-hypothesis-token)
-  (setq hypothesis-quote-prefix "#+begin_example")
-  (setq hypothesis-quote-sufix "#+end_example")
-  )
+;; (use-package! hypothesis
+;;   :defer 5
+;;   :commands hypothesis-to-org hypothesis-to-archive
+;;   :config
+;;   (setq hypothesis-username user-hypothesis-username)
+;;   (setq hypothesis-token user-hypothesis-token)
+;;   (setq hypothesis-quote-prefix "#+begin_example")
+;;   (setq hypothesis-quote-sufix "#+end_example")
+;;   )
 
-(after! hypothesis
-  (setq hypothesis-archive (my/org-links-file)))
+;; (after! hypothesis
+;;   (setq hypothesis-archive (my/org-links-file)))
 
 ;;;;; guess-language
 
@@ -4418,7 +4418,7 @@ only those in the selected frame."
 
   (progn
     (add-hook 'after-setting-font-hook #'my/fontaine-load-preset 90)
-    (add-hook 'doom-first-input-hook #'my/fontaine-load-preset) ;; 2025-06-25
+    ;; (add-hook 'doom-first-input-hook #'my/fontaine-load-preset) ;; 2025-06-25
     (add-hook 'doom-load-theme-hook #'my/fontaine-load-preset) ;; 2025-06-25
     )
 
@@ -6382,8 +6382,8 @@ Suitable for `imenu-create-index-function'."
   (modus-themes-toggle)
   )
 
-(when (display-graphic-p) ; gui
-  (add-hook 'doom-first-input-hook #'my/open-workspaces))
+;; (when (display-graphic-p) ; gui
+;;   (add-hook 'doom-first-input-hook #'my/open-workspaces))
 
 ;;;; tab-line-mode on emacs-30
 

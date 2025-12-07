@@ -1350,44 +1350,6 @@ cd -
 
 ;;     ))
 
-
-;;;; Dired with ultra lightweight icons
-
-; ;2025-08-13 disable on terminal
-;; 2025-06-21 disable nerd-icons-dired first
-;; https://emacs.dyerdwelling.family/emacs/20250612223745-emacs--emacs-dired-with-ultra-lightweight-visual-icons/
-(progn
-  (defvar dired-icons-map
-    '(("el" . "λ") ("rb" . "◆") ("js" . "○") ("ts" . "●") ("json" . "◎") ("md" . "■")
-      ("txt" . "□") ("html" . "▲") ("css" . "▼") ("png" . "◉") ("jpg" . "◉")
-      ("pdf" . "▣") ("zip" . "▢") ("py" . "∆") ("c" . "◇") ("sql" . "▦")
-      ("mp3" . "♪") ("mp4" . "▶") ("exe" . "▪")))
-
-  (defun dired-add-icons ()
-    (when (derived-mode-p 'dired-mode)
-      (let ((inhibit-read-only t))
-        (save-excursion
-          (goto-char (point-min))
-          (while (and (not (eobp)) (< (line-number-at-pos) 200))
-            (condition-case nil
-                (let ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
-                  (when (and (> (length line) 10)
-                             (string-match "\\([rwxd-]\\{10\\}\\)" line)
-                             (dired-move-to-filename t)
-                             (not (looking-at "[▶◦λ◆○●◎■□▲▼◉▣▢◇∆▦♪▪] ")))
-                    (let* ((is-dir (eq (aref line (match-beginning 1)) ?d))
-                           (filename (and (string-match "\\([^ ]+\\)$" line) (match-string 1 line)))
-                           (icon (cond (is-dir "▶")
-                                       ((and filename (string-match "\\.\\([^.]+\\)$" filename))
-                                        (or (cdr (assoc (downcase (match-string 1 filename)) dired-icons-map)) "◦"))
-                                       (t "◦"))))
-                      (insert icon " "))))
-              (error nil))
-            (forward-line))))))
-
-  (when (display-graphic-p) ; gui
-    (add-hook 'dired-after-readin-hook 'dired-add-icons)))
-
 ;;;; my/diff-hl-dired-mark-modified
 
 (with-eval-after-load 'diff-hl
@@ -1409,41 +1371,41 @@ cd -
                     (dired-mark 1))))))
           (forward-line 1)))))
 
-;; (defun my/diff-hl-dired-mark-untracked ()
+  ;; (defun my/diff-hl-dired-mark-untracked ()
   ;; "Mark all untracked files in current dired buffer."
-(defun my/diff-hl-dired-mark-modified ()
-  "Mark all modified (edited/added/removed/untracked) files in current dired buffer."
-  (interactive)
-  (let ((backend (ignore-errors (vc-responsible-backend default-directory)))
-        (def-dir default-directory)
-        (current-buffer (current-buffer)))
-    (when (and backend (not (memq backend diff-hl-dired-ignored-backends)))
-      (let ((process-buffer (generate-new-buffer " *mark-untracked-tmp*")))
-        (with-current-buffer process-buffer
-          (setq default-directory (expand-file-name def-dir))
-          (erase-buffer)
-          (diff-hl-dired-status-files
-           backend def-dir
-           (when diff-hl-dired-extra-indicators
-             (cl-loop for file in (directory-files def-dir)
-                      unless (member file '("." ".." ".hg" ".git"))
-                      collect file))
-           (lambda (entries &optional more-to-come)
-             (when (buffer-live-p current-buffer)
-               (with-current-buffer current-buffer
-                 (let ((inhibit-read-only t))
-                   (dolist (entry entries)
-                     (cl-destructuring-bind (file state &rest r) entry
-                       (setq file (replace-regexp-in-string "\\` " "" file))
-                       (when (memq state '(unregistered edited added removed)) ;; all-in-one
-                         (save-excursion
-                           (goto-char (point-min))
-                           (when (dired-goto-file-1
-                                  file (expand-file-name file def-dir) nil)
-                             (dired-mark 1)))))))))
-             (unless more-to-come
-               (when (buffer-live-p process-buffer)
-                 (kill-buffer process-buffer))))))))))
+  (defun my/diff-hl-dired-mark-modified ()
+    "Mark all modified (edited/added/removed/untracked) files in current dired buffer."
+    (interactive)
+    (let ((backend (ignore-errors (vc-responsible-backend default-directory)))
+          (def-dir default-directory)
+          (current-buffer (current-buffer)))
+      (when (and backend (not (memq backend diff-hl-dired-ignored-backends)))
+        (let ((process-buffer (generate-new-buffer " *mark-untracked-tmp*")))
+          (with-current-buffer process-buffer
+            (setq default-directory (expand-file-name def-dir))
+            (erase-buffer)
+            (diff-hl-dired-status-files
+             backend def-dir
+             (when diff-hl-dired-extra-indicators
+               (cl-loop for file in (directory-files def-dir)
+                        unless (member file '("." ".." ".hg" ".git"))
+                        collect file))
+             (lambda (entries &optional more-to-come)
+               (when (buffer-live-p current-buffer)
+                 (with-current-buffer current-buffer
+                   (let ((inhibit-read-only t))
+                     (dolist (entry entries)
+                       (cl-destructuring-bind (file state &rest r) entry
+                         (setq file (replace-regexp-in-string "\\` " "" file))
+                         (when (memq state '(unregistered edited added removed)) ;; all-in-one
+                           (save-excursion
+                             (goto-char (point-min))
+                             (when (dired-goto-file-1
+                                    file (expand-file-name file def-dir) nil)
+                               (dired-mark 1)))))))))
+               (unless more-to-come
+                 (when (buffer-live-p process-buffer)
+                   (kill-buffer process-buffer))))))))))
   )
 
 
