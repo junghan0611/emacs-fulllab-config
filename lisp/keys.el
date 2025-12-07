@@ -207,7 +207,7 @@
 ;;;;; remap all C-c prefix keys to M-c?
 
 ;; static map
-(define-key key-translation-map (kbd "M-c") (kbd "C-c"))
+;; (define-key key-translation-map (kbd "M-c") (kbd "C-c"))
 
 ;; dynamic map - copying
 ;; (progn

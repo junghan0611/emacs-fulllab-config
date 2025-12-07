@@ -312,19 +312,14 @@
 ;; (package! gpt-babel :recipe (:local-repo "~/git/default/gpt-babel/"))
 ;; (package! org-auto-tangle :recipe (:local-repo "~/git/default/org-auto-tangle/"))
 
+(package! ai-code-interface :recipe (:host github :repo "tninja/ai-code-interface.el"))
+
 (package! claude-code-ide :recipe (:host github :repo "manzaltu/claude-code-ide.el" ))
 (package! claude-code :recipe (:host github :repo "stevemolitor/claude-code.el" ))
 (package! monet :recipe (:host github :repo "stevemolitor/monet" ))
 
-(package! eshell-atuin)
-(package! eat :recipe
-  (:host codeberg
-   :repo "akib/emacs-eat"
-   :files ("*.el" ("term" "term/*.el") "*.texi"
-           "*.ti" ("terminfo/e" "terminfo/e/*")
-           ("terminfo/65" "terminfo/65/*")
-           ("integration" "integration/*")
-           (:exclude ".dir-locals.el" "*-tests.el"))))
+(package! whisper :recipe (:host github :repo "natrys/whisper.el"))
+(package! eca :recipe (:host github :repo "editor-code-assistant/eca-emacs" :files ("*.el")))
 
 ;;;; ACP (Agent Client Protocol)
 
@@ -336,22 +331,10 @@
 
 ;;;;; extra packages
 
-;; (package! khoj)
-
-;; (package! aidermacs :recipe (:host github :repo "MatthewZMD/aidermacs" :files ("*.el")))
-
 (package! llm)
 (package! semext :recipe (:host github :repo "ahyatt/semext"))
 (package! pcsv)
-
 (package! elysium)
-;; (package! elysium :recipe (:local-repo "~/git/junghan0611/elysium/"))
-
-;; (package! whisper :recipe (:host github :repo "natrys/whisper.el"))
-;; (package! ellama)
-
-;; git@github.com:ziova/wolfram.el.git
-;; (package! wolfram :recipe (:host github :repo "ziova/wolfram.el"))
 
 ;;;; :lang
 

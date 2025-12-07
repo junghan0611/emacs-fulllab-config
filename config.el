@@ -1286,45 +1286,6 @@ only those in the selected frame."
 
 ;;;; :term
 
-;;;;; eshell-atuin
-
-(use-package! eshell-atuin
-  :when (executable-find "atuin")
-  :after eshell
-  :init (eshell-atuin-mode)
-  :config
-  (setopt
-   eshell-atuin-search-fields '(time duration command directory relativetime)
-   eshell-atuin-history-format "%-70c %>10r %-40i "
-   eshell-atuin-filter-mode 'global
-   eshell-atuin-search-options nil)
-
-  (defadvice! eshell-atuin-history-fix-sorting-a (ofn &optional arg)
-    :around #'eshell-atuin-history
-    (let* ((vertico-sort-function nil))
-      (funcall ofn arg))))
-
-;;;;; TODO eshell
-
-;; (after! eshell
-;;   ;; Set up `completion-at-point-functions'
-;;   (defun krisb-eshell-setup ()
-;;     "Buffer-local settings for eshell."
-;;     (set-display-table-slot standard-display-table 0 ?\ )
-;;     (setq-local scroll-margin 3
-;;                 line-spacing 0
-;;                 ;; TODO 2025-03-27: The `outline-regexp' and
-;;                 ;; `imenu-generic-expression' settings don't work anymore.  Not
-;;                 ;; sure why.
-;;                 ;; `consult-outline' support for eshell prompts. See
-;;                 ;; https://github.com/minad/consult/wiki#consult-outline-support-for-eshell-prompts
-;;                 outline-regexp eshell-prompt-regexp
-;;                 ;; Imenu with eshell prompt history
-;;                 imenu-generic-expression `((nil ,eshell-prompt-regexp 0))))
-
-;;   (add-hook 'eshell-mode-hook #'krisb-eshell-setup)
-;;   )
-
 ;;;;; vterm
 
 (after! vterm
@@ -3590,52 +3551,6 @@ only those in the selected frame."
 ;;   ;; (emigo-base-url "https://openrouter.ai/api/v1")
 ;;   ;; (emigo-api-key (getenv "OPENROUTER_API_KEY"))
 ;;   )
-
-;;;;; llmclient: claude-code-ide.el
-
-(use-package! claude-code-ide
-  :init
-  (setq claude-code-ide-window-side 'right
-        claude-code-ide-window-width 90)
-  :config
-  (setq claude-code-ide-terminal-backend 'vterm)
-  (setq claude-code-ide-use-ide-diff nil)
-
-  (load! "+claude-code-ide-mcp-tools")
-  (claude-code-ide-emacs-tools-setup)
-  ) ; Optionally enable Emacs MCP tools
-
-;;;;; llmclient: claude-code.el
-
-(use-package! monet)
-(use-package! claude-code
-  :config
-  (setq claude-code-terminal-backend 'vterm)
-  (defun my-claude-notify-with-sound (title message)
-    "Display a Linux notification with sound."
-    (when (executable-find "notify-send")
-      (call-process "notify-send" nil nil nil title message))
-    ;; Play sound if paplay is available
-    (when (executable-find "paplay")
-      (call-process "paplay" nil nil nil "/usr/share/sounds/freedesktop/stereo/complete.oga")))
-  (setq claude-code-notification-function #'my-claude-notify-with-sound)
-
-  ;; optional IDE integration with Monet
-  (require 'monet)
-  (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
-  (monet-mode 1)
-
-  (set-popup-rule! "^\\*claude" :vslot -15 :width 90 :side 'right :ttl t :select t :quit nil :modeline t)
-
-  (claude-code-mode)
-
-  (add-hook 'claude-code-start-hook
-            (lambda ()
-              ;; Only increase scrollback for vterm backend
-              (when (eq claude-code-terminal-backend 'vterm)
-                (setq-local x-gtk-use-native-input t)
-                (setq-local vterm-max-scrollback 100000))))
-  )
 
 ;;;;; llmclient: github copilot
 
@@ -7513,42 +7428,6 @@ function to apply the changes."
 
 (setq auth-sources '(password-store "~/.authinfo.gpg"))
 
-;;;; ACP (Agent Client Protocol)
-;; https://agentclientprotocol.com/
-;; https://github.com/xenodium/agent-shell/issues/27
-
-(progn
-  (require 'shell-maker)
-  (require 'acp)
-  (require 'agent-shell)
-  (setq agent-shell-anthropic-authentication
-        (agent-shell-anthropic-make-authentication :login t))
-
-  (setq agent-shell-qwen-authentication
-        (agent-shell-qwen-make-authentication :login t))
-
-  ;; (setq agent-shell-google-authentication
-  ;;       (agent-shell-google-make-authentication :login t))
-  ;; (setq agent-shell-openai-authentication
-  ;;       (agent-shell-openai-make-authentication :login t))
-
-  (setq agent-shell--transcript-file-path-function #'agent-shell--default-transcript-file-path)
-  (setq agent-shell-header-style nil)
-
-  (require 'agent-shell-manager)
-  ;; Bind s-b to toggle agent-shell-manager
-  (map! :n "s-;" #'agent-shell-manager-toggle)
-  (setq agent-shell-manager-side 'bottom)  ; Options: 'left, 'right, 'top, 'bottom
-
-  (require 'agent-shell-sidebar)
-  (setq agent-shell-sidebar-width "25%"
-        agent-shell-sidebar-minimum-width 80
-        agent-shell-sidebar-maximum-width "50%"
-        agent-shell-sidebar-position 'right
-        agent-shell-sidebar-locked t
-        agent-shell-sidebar-default-config (agent-shell-anthropic-make-claude-code-config))
-  )
-
 ;;; TODO khoj
 
 ;; (
@@ -7651,5 +7530,11 @@ function to apply the changes."
 ;; Bind a convenient prefix (optional)
 ;; (setq efrit-enable-global-keymap t)
 ;; (efrit-setup-keybindings)
+
+;;;; AI : ECA + WHISPER
+
+(add-to-list 'load-path "~/sync/emacs/doomemacs-config/lisp/")
+(require 'ai-eca-whisper)
+(require 'ai-agent-shell)
 
 ;;; left blank on purpose
