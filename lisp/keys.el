@@ -204,19 +204,6 @@
     )
   )
 
-;;;;; remap all C-c prefix keys to M-c?
-
-;; static map
-;; (define-key key-translation-map (kbd "M-c") (kbd "C-c"))
-
-;; dynamic map - copying
-;; (progn
-;;   (defun my-generate-c-c-map ()
-;;     (let ((map (make-sparse-keymap)))
-;;       (set-keymap-parent map (lookup-key global-map (kbd "C-c")))
-;;       map))
-;;   (global-set-key (kbd "M-c") (my-generate-c-c-map)))
-
 ;;;;; embark - doom vs. spacemacs style
 
 ;; C-; embark-ack ; doom default

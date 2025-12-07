@@ -1812,60 +1812,6 @@ only those in the selected frame."
   (push '(?h "Section") (plist-get (cdr (assoc 'emacs-lisp-mode consult-imenu-config)) :types))
   )
 
-;;;;; Projectile
-
-;; External tools required to make projectile fly! fd, ag, rg
-;; evil-dot-doom/modules/custom/projects/config.el
-
-(after! projectile
-  ;; Disable projectile cache - saves requirement to invalidate cache when moving files
-  (setq projectile-enable-caching nil)
-  (setq projectile-sort-order 'recentf)
-   ;; projectile-verbose nil
-
-  ;; create missing test files
-  (setq projectile-create-missing-test-files t)
-
-  ;; add clojure specific folders to be ignored by projectile
-  (setq projectile-globally-ignored-directories
-        (append projectile-globally-ignored-directories
-                '(".clj-kondo"
-                  ".cpcache"
-                  "tmp" "del"
-                  ".local")))
-
-  ;; Search https://discourse.doomemacs.org/ for example configuration
-  (setq projectile-ignored-projects
-        (list "~/" "/tmp" (expand-file-name "straight/repos" doom-local-dir)))
-  (defun projectile-ignored-project-function (filepath)
-    "Return t if FILEPATH is within any of `projectile-ignored-projects'"
-    (or (mapcar
-         (lambda (p) (s-starts-with-p p filepath)) projectile-ignored-projects)))
-
-  ;; for clojure dev
-  (setq projectile-project-root-files-bottom-up
-        (append projectile-project-root-files-bottom-up
-                '("build.clj" "project.clj" "LICENSE")))
-
-  ;; Define a project path to discover projects using SPC Tab D
-  ;; https://docs.projectile.mx/projectile/usage.html
-  ;; (setq projectile-project-search-path '("~/projects/" "~/work/" ("~/github" . 1)))
-  ;; (setq projectile-project-search-path '(("~/code" . 2) ("~/git" . 2)))
-
-  ;; direct projectile to look for code in a specific folder.
-  (setq projectile-project-search-path '("~/repos" . 2))
-
-  (map! :leader
-        :desc "Toggle Impl & Test" "pt" #'projectile-toggle-between-implementation-and-test
-        ;; :desc "List todos" "pl" #'magit-todos-list
-        :desc "See project root dir" "p-" #'projectile-dired
-        :desc "Ripgrep" "pG" #'projectile-ripgrep)
-
-  ;; stop $HOME from being recognizes as a project root
-  ;; (setq projectile-project-root-files-bottom-up
-  ;;       (remove ".git" projectile-project-root-files-bottom-up))
-  )
-
 ;;;;; treemacs
 
 (setq treemacs-position 'left)
@@ -7536,5 +7482,7 @@ function to apply the changes."
 (add-to-list 'load-path "~/sync/emacs/doomemacs-config/lisp/")
 (require 'ai-eca-whisper)
 (require 'ai-agent-shell)
+(require 'keybindings-remap)
+(require 'project-config)
 
 ;;; left blank on purpose
