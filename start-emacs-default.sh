@@ -15,7 +15,7 @@ else
 fi
 
 # Doom 설정 (분리된 설치 사용)
-export DOOMDIR="$HOME/repos/gh/dotemacs/dotdoomemacs"
+export DOOMDIR="$HOME/repos/gh/dotemacs/"
 
 # TUI 모드 체크 (--tui 옵션이 있으면 터미널로 실행)
 if [[ " $@ " =~ " --tui " ]]; then

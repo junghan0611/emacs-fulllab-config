@@ -74,7 +74,7 @@ Python, Nix, JavaScript/TypeScript, LaTeX, Shell, Emacs Lisp, C/C++, Janet, Zig 
 
 ```
 emacs-fulllab-config/
-├── dotdoomemacs/           # Doom Emacs 설정
+├──            # Doom Emacs 설정
 │   ├── init.el             # 모듈 선언
 │   ├── config.el           # 핵심 설정
 │   ├── packages.el         # 패키지 관리
@@ -155,7 +155,7 @@ emacs --with-profile spacemacs
 
 ### 새 기능 추가
 
-1. **패키지 추가** `dotdoomemacs/packages.el` 또는 Spacemacs 레이어에
+1. **패키지 추가** `packages.el` 또는 Spacemacs 레이어에
 2. **설정** 적절한 파일에 (또는 새 `+feature.el` 생성)
 3. **테스트** 두 프레임워크에서
 4. **공유 코드 추출** 해당되면 `lisp/`로

@@ -1,4 +1,4 @@
-;;; ../dotemacs/dotdoomemacs/autoload/embark.el -*- lexical-binding: t; -*-
+;;; ../dotemacs/autoload/embark.el -*- lexical-binding: t; -*-
 
 ;;;###autoload
 (eval-when-compile

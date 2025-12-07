@@ -32,7 +32,7 @@ This repository serves as:
 
 ```
 dotemacs/
-├── dotdoomemacs/          # Doom Emacs configuration
+├──           # Doom Emacs configuration
 │   ├── init.el            # Module declarations
 │   ├── config.el          # Core configuration
 │   └── packages.el        # Package management

@@ -38,20 +38,13 @@
 ;; However, some config is more involved, such as packages I just want in one
 ;; environment and not the others.  To that end, let's load a file that can contain
 ;; those customizations.
-(let ((per-machine-filename (concat user-dotemacs-dir "lisp/per-machine.el")))
+(let ((per-machine-filename (concat user-dotemacs-dir "per-machine.el")))
   (when (file-exists-p per-machine-filename)
     (load-file per-machine-filename)))
 
-;;;; Load 'user-keys'
-
-(let ((user-keys-filename (concat user-dotemacs-dir "user-keys.el")))
-  (when (file-exists-p user-keys-filename)
-    (load-file user-keys-filename)))
-
-;;;; Load 'user-configs'
-
-;; (load! "+user-configs")
-;; (message "load +user-configs.el")
+;; (let ((user-keys-filename (concat user-dotemacs-dir "user-keys.el")))
+;;   (when (file-exists-p user-keys-filename)
+;;     (load-file user-keys-filename)))
 
 ;;;; Doom Common Configuration
 
@@ -161,10 +154,6 @@
 (setq find-file-visit-truename nil) ; doom t
 ;; Stop asking abount following symlinks to version controlled files
 ;; (setq vc-follow-symlinks nil) ; doom t
-
-;;;;; initial-scratch-message
-
-(setq initial-scratch-message user-initial-scratch-message)
 
 ;;;;; Tab-width
 
@@ -6398,23 +6387,21 @@ Suitable for `imenu-create-index-function'."
 
 ;;;; tab-line-mode on emacs-30
 
-(when (eq emacs-major-version 30)
-  (use-package! tab-line
-    :if window-system
-    :demand t
-    :config
-    (setq tab-line-exclude-modes '(completion-list-mode reb-mode reb-lisp-mode calc-mode calc-trail-mode)) ; 2025-02-09
-    (setq tab-line-close-tab-function #'kill-buffer)
-    (setq tab-line-tab-name-truncated-max 26) ; default 20
-    (setq tab-line-tab-name-ellipsis "…")
-    (setq tab-line-tab-name-function
-          #'tab-line-tab-name-truncated-buffer)
-    (setq
-     tab-line-new-button-show nil
-     tab-line-close-button-show nil)
+(use-package! tab-line
+  :if window-system
+  :demand t
+  :config
+  (setq tab-line-exclude-modes '(completion-list-mode reb-mode reb-lisp-mode calc-mode calc-trail-mode)) ; 2025-02-09
+  (setq tab-line-close-tab-function #'kill-buffer)
+  (setq tab-line-tab-name-truncated-max 26) ; default 20
+  (setq tab-line-tab-name-ellipsis "…")
+  (setq tab-line-tab-name-function
+        #'tab-line-tab-name-truncated-buffer)
+  (setq
+   tab-line-new-button-show nil
+   tab-line-close-button-show nil)
 
-    (global-tab-line-mode 1)
-    )
+  (global-tab-line-mode 1)
   )
 
 ;;;; copy-screenshot-markdown

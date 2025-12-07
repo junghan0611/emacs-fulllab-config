@@ -6,7 +6,7 @@ echo "=== Doom Emacs Default Profile Sync ==="
 
 # 1. 환경 변수 설정
 export DOOMPROFILE=default
-export DOOMDIR="$HOME/repos/gh/dotemacs/dotdoomemacs/"
+export DOOMDIR="$HOME/repos/gh/dotemacs/"
 
 echo "Profile: $DOOMPROFILE"
 echo "DOOMDIR: $DOOMDIR"

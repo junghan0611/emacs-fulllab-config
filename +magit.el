@@ -1,4 +1,4 @@
-;;; ../dotemacs/dotdoomemacs/+magit.el -*- lexical-binding: t; -*-
+;;; ../dotemacs/+magit.el -*- lexical-binding: t; -*-
 
 ;;;; ENHANCED DIFF-MODE CONFIGURATION
 

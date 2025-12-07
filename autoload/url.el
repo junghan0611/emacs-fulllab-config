@@ -1,4 +1,4 @@
-;;; ../dotemacs/dotdoomemacs/autoload/url.el -*- lexical-binding: t; -*-
+;;; ../dotemacs/autoload/url.el -*- lexical-binding: t; -*-
 
 (require 'ghub)
 
