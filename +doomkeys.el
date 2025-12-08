@@ -48,30 +48,6 @@
   (global-set-key (kbd "C-s-[") '+workspace/switch-left)
   (global-set-key (kbd "C-s-]") '+workspace/switch-right))
 
-;;;; 'l' Layout keys - disable `SPC TAB' workspace prefix
-
-;; spacemacs's style
-(map! :leader
-      (:prefix ("l". "layout/workspace")
-       :desc "+workspace/other" "<tab>" #'+workspace/other
-       :desc "+workspace/display" "d" #'+workspace/display
-       :desc "+workspace/delete" "D" #'+workspace/delete
-       :desc "+workspace/switch-to" "l" #'+workspace/switch-to
-       :desc "open workspaces" "o" #'my/open-workspaces
-       :desc "+workspace/load" "L" #'+workspace/load
-       :desc "+workspace/new" "n" #'+workspace/new
-       :desc "+workspace/rename " "r" #'+workspace/rename
-       :desc "+workspace/restore-last-session" "R" #'+workspace/restore-last-session
-       :desc "+workspace/save" "s" #'+workspace/save
-       :desc "+workspace/kill-session" "x" #'+workspace/kill-session
-       :desc "1st workspace" "1" #'+workspace/switch-to-0
-       :desc "2nd workspace" "2" #'+workspace/switch-to-1
-       :desc "3rd workspace" "3" #'+workspace/switch-to-2
-       :desc "4th workspace" "4" #'+workspace/switch-to-3
-       :desc "5th workspace" "5" #'+workspace/switch-to-4
-       :desc "6th workspace" "6" #'+workspace/switch-to-5
-       :desc "7th workspace" "7" #'+workspace/switch-to-6))
-
 ;;;; popup
 
 (map! :leader
@@ -688,7 +664,7 @@
        ;; :desc "+default/org-notes-headlines"  "S" #'+default/org-notes-headlines
 
        :desc "org-search-veiw"               "v" #'org-search-view
-       "u" #'org-transclusion-mode
+       ;; "u" #'org-transclusion-mode
 
        :desc "+org/export-to-clipboard"      "y" #'+org/export-to-clipboard
 
@@ -1612,7 +1588,7 @@
         ;; that, and should probably be PRed to org.
         ;; [tab]        #'org-cycle
         "M-9" #'denote-link
-        "<f12>" #'org-transclusion-mode
+        ;; "<f12>" #'org-transclusion-mode
         "C-M-y" #'org-rich-yank
         ;; "C-M-Y" #'cae-org-rich-yank
         "s-p" #'org-hugo-export-to-md ;; "M-p"
@@ -1820,7 +1796,6 @@
         "o" nil
         ;; :desc "@note-map" "n" ews-note-map
         :desc "@denote-map" "n" ews-denote-map
-        :desc "@org-transclusion-map" "u" ews-org-transclusion-map
         ;; :desc "@org-noter-map" "o" ews-org-noter-map
         "o" #'my/denote-howmish-find-file
 

@@ -190,51 +190,6 @@
 ;;   (add-hook 'org-mode-hook 'display-line-numbers-mode)
 ;;   (add-hook 'markdown-mode-hook 'display-line-numbers-mode))
 
-;;;;; Time
-
-(require 'time)
-
-;; (setq display-time-format "%l:%M %p %b %d W%U") ;; dw-dotfiles
-(setq display-time-format " W%U |%a %e %b, %H:%M| ") ; Ⓦ 🅆 🆆
-
-;; Covered by `display-time-format'
-;; (setq display-time-24hr-format t)
-;; (setq display-time-day-and-date t)
-;; (setq display-time-interval 30) ; default 60
-(setq display-time-default-load-average nil)
-
-;; NOTE 2022-09-21: For all those, I have implemented my own solution
-;; that also shows the number of new items, although it depends on
-;; notmuch: the `notmuch-indicator' package.
-(setq display-time-mail-directory nil)
-(setq display-time-mail-function nil)
-(setq display-time-use-mail-icon nil)
-(setq display-time-mail-string nil)
-(setq display-time-mail-face nil)
-
-;;;;; Calendar
-
-(require 'calendar)
-;; (setq org-agenda-start-on-weekday nil)
-(add-hook 'calendar-today-visible-hook 'calendar-mark-today)
-(setq
- calendar-date-style 'iso ;; YYYY/MM/DD
- calendar-mark-holidays-flag t
- calendar-week-start-day 1 ;; 0 Sunday, 1 Monday
- calendar-mark-diary-entries-flag nil
- calendar-latitude user-calendar-latitude
- calendar-longitude user-calendar-longitude
- calendar-location-name user-calendar-location-name
- calendar-time-display-form
- '(24-hours
-   ":" minutes
-   (if time-zone
-       " (")
-   time-zone
-   (if time-zone
-       ")")))
-
-
 ;;;;; Which-key
 
 (after! which-key
@@ -2269,43 +2224,43 @@ only those in the selected frame."
 
 ;;;;;; org-transclusion
 
-(use-package! org-transclusion
-  :after org
-  :defer 2
-  :commands org-transclusion-mode
-  :config
-  (set-face-attribute 'org-transclusion-fringe nil :foreground "light green" :background "lime green")
-  )
+;; (use-package! org-transclusion
+;;   :after org
+;;   :defer 2
+;;   :commands org-transclusion-mode
+;;   :config
+;;   (set-face-attribute 'org-transclusion-fringe nil :foreground "light green" :background "lime green")
+;;   )
 
-(after! org-transclusion
-  (add-to-list 'org-transclusion-extensions 'org-transclusion-indent-mode)
-  (require 'org-transclusion-indent-mode))
+;; (after! org-transclusion
+;;   (add-to-list 'org-transclusion-extensions 'org-transclusion-indent-mode)
+;;   (require 'org-transclusion-indent-mode))
 
 ;;;;;; org-remark
 
-(use-package! org-remark
-  :after org
-  :config (setq org-remark-notes-file-name (my/org-remark-file))
-  (org-remark-create "red-line"
-                     '(:underline (:color "magenta" :style wave))
-                     '(CATEGORY "review" help-echo "Review this"))
-  (org-remark-create "yellow"
-                     '(:underline "gold")
-                     '(CATEGORY "important"))
+;; (use-package! org-remark
+;;   :after org
+;;   :config (setq org-remark-notes-file-name (my/org-remark-file))
+;;   (org-remark-create "red-line"
+;;                      '(:underline (:color "magenta" :style wave))
+;;                      '(CATEGORY "review" help-echo "Review this"))
+;;   (org-remark-create "yellow"
+;;                      '(:underline "gold")
+;;                      '(CATEGORY "important"))
 
-  ;; It is recommended that `org-remark-global-tracking-mode' be enabled when
-  ;; Emacs initializes. Alternatively, you can put it to `after-init-hook' as in
-  ;; the comment above
-  ;; (require 'org-remark-global-tracking)
-  ;; (org-remark-global-tracking-mode +1)
+;;   ;; It is recommended that `org-remark-global-tracking-mode' be enabled when
+;;   ;; Emacs initializes. Alternatively, you can put it to `after-init-hook' as in
+;;   ;; the comment above
+;;   ;; (require 'org-remark-global-tracking)
+;;   ;; (org-remark-global-tracking-mode +1)
 
-  ;; Optional if you would like to highlight websites via eww-mode
-  ;; (with-eval-after-load 'eww (org-remark-eww-mode +1))
-  ;; Optional if you would like to highlight EPUB books via nov.el
-  ;; (with-eval-after-load 'nov (org-remark-nov-mode +1))
-  ;; Optional if you would like to highlight Info documentation via Info-mode
-  ;; (with-eval-after-load 'info (org-remark-info-mode +1))
-  )
+;;   ;; Optional if you would like to highlight websites via eww-mode
+;;   ;; (with-eval-after-load 'eww (org-remark-eww-mode +1))
+;;   ;; Optional if you would like to highlight EPUB books via nov.el
+;;   ;; (with-eval-after-load 'nov (org-remark-nov-mode +1))
+;;   ;; Optional if you would like to highlight Info documentation via Info-mode
+;;   ;; (with-eval-after-load 'info (org-remark-info-mode +1))
+;;   )
 
 ;;;;;; remember
 
@@ -4312,150 +4267,6 @@ abcdefghijklmnopqrstuvwxyz
 x×X .,·°;:¡!¿?`'‘’   ÄAÃÀ TODO
 "))
 
-;;;;; doom-modeline
-
-
-(after! doom-modeline
-  (doom-modeline-def-modeline
-    'main
-    '(eldoc
-      bar
-      persp-name
-      ;; workspace-name - conflict tab-bar
-      window-number
-      modals
-      input-method
-      matches
-      follow
-      buffer-info
-      remote-host
-      buffer-position
-      word-count
-      parrot
-      selection-info)
-    '(compilation
-      objed-state
-      misc-info
-      battery
-      grip
-      irc
-      mu4e
-      gnus
-      github
-      debug
-      repl
-      lsp
-      minor-modes
-      indent-info
-      buffer-encoding
-      major-mode
-      process
-      vcs
-      check
-      time))
-
-  (setq doom-modeline-time nil)
-  (setq doom-modeline-time-icon nil)
-  (setq doom-modeline-minor-modes nil)
-  ;; (setq doom-modeline-battery nil)
-  ;; (setq Info-breadcrumbs-in-mode-line-mode nil)
-  (setq doom-modeline-support-imenu nil)
-
-  ;; UTF-8 is default encoding remove it from modeline
-  ;; frap-dot-doom/ui-old.el
-  (defun doom-modeline-conditional-buffer-encoding ()
-    "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
-    (setq-local doom-modeline-buffer-encoding
-                (unless (or (eq buffer-file-coding-system 'utf-8-unix)
-                            (eq buffer-file-coding-system 'utf-8)))))
-  (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
-
-  (setq doom-modeline-enable-word-count nil)
-  ;; (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mod)) ; org-mode
-
-  (setq doom-modeline-icon (display-graphic-p))
-  (setq doom-modeline-modal-icon t)
-  (setq doom-modeline-major-mode-icon t)
-  (setq doom-modeline-buffer-modification-icon t)
-
-  (setq doom-modeline-height 35)
-  (setq doom-modeline-bar-width 4)
-
-  (setq doom-modeline-persp-name t) ; doom nil
-  (setq doom-modeline-window-width-limit (- fill-column 5))
-
-  (setq doom-modeline-repl t)
-  (setq doom-modeline-github t)
-  (setq doom-modeline-lsp t)
-  (setq doom-modeline-indent-info t)
-  ;; (setq doom-modeline-hud nil)
-  (setq doom-modeline-buffer-file-name-style 'truncate-upto-project) ; default 'auto
-
-  (remove-hook 'display-time-mode-hook #'doom-modeline-override-time)
-  (remove-hook 'doom-modeline-mode-hook #'doom-modeline-override-time))
-
-;;;;; celestial-mode-line
-
-(use-package! celestial-mode-line
-  :after time
-  :init
-  (setq celestial-mode-line-update-interval 3600) ; default 60
-  (setq celestial-mode-line-sunrise-sunset-alist
-        '((sunrise . "🌅") (sunset . "🌃")))
-  (setq celestial-mode-line-phase-representation-alist
-        '((0 . "🌚") (1 . "🌛") (2 . "🌝") (3 . "🌜")))
-  :config (celestial-mode-line-start-timer)
-  )
-
-;;;;; keycast tab-bar
-
-(use-package! keycast
-  :config
-  ;; (setq keycast-tab-bar-minimal-width 50) ; 40
-  (setq keycast-tab-bar-format "%10s%k%c%r")
-
-  (dolist (input '(self-insert-command org-self-insert-command))
-    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
-  (dolist (event
-           '(mouse-event-p mouse-movement-p
-             mwheel-scroll
-             handle-select-window
-             mouse-set-point
-             mouse-drag-region
-             dired-next-line ; j
-             dired-previous-line ; k
-             next-line
-             previous-line
-             evil-next-line ; j
-             evil-previous-line ; k
-             evil-forward-char ; l
-             evil-backward-char ; h
-             pixel-scroll-interpolate-up ; <prior> page-up
-             pixel-scroll-interpolate-down ; <next> page-down
-
-             pixel-scroll-precision
-             evil-jump-item
-             evil-mouse-drag-region ;; double click
-
-             org-cycle
-             keyboard-quit
-             save-buffer
-             ;; block-toggle-input-method
-             ;; toggle-input-method
-
-             ;; evil-formal-state
-             ;; evil-force-normal-state
-
-             ;; 2023-10-02 Added for clojure-dev
-             ;; lsp-ui-doc--handle-mouse-movement
-             ignore-preserving-kill-region
-             ;; pdf-view-text-region
-             ;; pdf-view-mouse-set-region
-             ;; mouse-set-region
-             ))
-    (add-to-list 'keycast-substitute-alist `(,event nil)))
-  )
-
 ;;;;; info-colors Info & Help
 
 ;; Info 모드 Node 이동
@@ -5496,6 +5307,164 @@ Suitable for `imenu-create-index-function'."
 ;;   )
 
 ;;;; end-of user-configs
+
+;;;; LOAD DOOMEMACS-CONFIG/LISP
+
+(progn
+  (add-to-list 'load-path "~/sync/emacs/doomemacs-config/lisp/")
+  (require 'ai-eca-whisper)
+  (require 'ai-agent-shell)
+  (require 'keybindings-config)
+  (require 'keybindings-remap)
+  (require 'project-config)
+  (require 'time-config)
+  (require 'denote-functions)
+  )
+
+;;;;; doom-modeline
+
+(after! doom-modeline
+  (doom-modeline-def-modeline
+    'main
+    '(eldoc
+      bar
+      persp-name
+      ;; workspace-name - conflict tab-bar
+      window-number
+      modals
+      input-method
+      matches
+      follow
+      buffer-info
+      remote-host
+      buffer-position
+      word-count
+      parrot
+      selection-info)
+    '(compilation
+      objed-state
+      misc-info
+      battery
+      grip
+      irc
+      mu4e
+      gnus
+      github
+      debug
+      repl
+      lsp
+      minor-modes
+      indent-info
+      buffer-encoding
+      major-mode
+      process
+      vcs
+      check
+      time))
+
+  (setq doom-modeline-time nil)
+  (setq doom-modeline-time-icon nil)
+  (setq doom-modeline-minor-modes nil)
+  ;; (setq doom-modeline-battery nil)
+  ;; (setq Info-breadcrumbs-in-mode-line-mode nil)
+  (setq doom-modeline-support-imenu nil)
+
+  ;; UTF-8 is default encoding remove it from modeline
+  ;; frap-dot-doom/ui-old.el
+  (defun doom-modeline-conditional-buffer-encoding ()
+    "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
+    (setq-local doom-modeline-buffer-encoding
+                (unless (or (eq buffer-file-coding-system 'utf-8-unix)
+                            (eq buffer-file-coding-system 'utf-8)))))
+  (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
+
+  (setq doom-modeline-enable-word-count nil)
+  ;; (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mod)) ; org-mode
+
+  (setq doom-modeline-icon (display-graphic-p))
+  (setq doom-modeline-modal-icon t)
+  (setq doom-modeline-major-mode-icon t)
+  (setq doom-modeline-buffer-modification-icon t)
+
+  (setq doom-modeline-height 35)
+  (setq doom-modeline-bar-width 4)
+
+  (setq doom-modeline-persp-name t) ; doom nil
+  (setq doom-modeline-window-width-limit (- fill-column 5))
+
+  (setq doom-modeline-repl t)
+  (setq doom-modeline-github t)
+  (setq doom-modeline-lsp t)
+  (setq doom-modeline-indent-info t)
+  ;; (setq doom-modeline-hud nil)
+  (setq doom-modeline-buffer-file-name-style 'truncate-upto-project) ; default 'auto
+
+  (remove-hook 'display-time-mode-hook #'doom-modeline-override-time)
+  (remove-hook 'doom-modeline-mode-hook #'doom-modeline-override-time))
+
+;;;;; celestial-mode-line
+
+(use-package! celestial-mode-line
+  :after time
+  :init
+  (setq celestial-mode-line-update-interval 3600) ; default 60
+  (setq celestial-mode-line-sunrise-sunset-alist
+        '((sunrise . "🌅") (sunset . "🌃")))
+  (setq celestial-mode-line-phase-representation-alist
+        '((0 . "🌚") (1 . "🌛") (2 . "🌝") (3 . "🌜")))
+  :config (celestial-mode-line-start-timer)
+  )
+
+;;;;; keycast tab-bar
+
+(use-package! keycast
+  :config
+  ;; (setq keycast-tab-bar-minimal-width 50) ; 40
+  (setq keycast-tab-bar-format "%10s%k%c%r")
+
+  (dolist (input '(self-insert-command org-self-insert-command))
+    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
+  (dolist (event
+           '(mouse-event-p mouse-movement-p
+             mwheel-scroll
+             handle-select-window
+             mouse-set-point
+             mouse-drag-region
+             dired-next-line ; j
+             dired-previous-line ; k
+             next-line
+             previous-line
+             evil-next-line ; j
+             evil-previous-line ; k
+             evil-forward-char ; l
+             evil-backward-char ; h
+             pixel-scroll-interpolate-up ; <prior> page-up
+             pixel-scroll-interpolate-down ; <next> page-down
+
+             pixel-scroll-precision
+             evil-jump-item
+             evil-mouse-drag-region ;; double click
+
+             org-cycle
+             keyboard-quit
+             save-buffer
+             ;; block-toggle-input-method
+             ;; toggle-input-method
+
+             ;; evil-formal-state
+             ;; evil-force-normal-state
+
+             ;; 2023-10-02 Added for clojure-dev
+             ;; lsp-ui-doc--handle-mouse-movement
+             ignore-preserving-kill-region
+             ;; pdf-view-text-region
+             ;; pdf-view-mouse-set-region
+             ;; mouse-set-region
+             ))
+    (add-to-list 'keycast-substitute-alist `(,event nil)))
+  )
+
+
 ;;;; :lang org
 
 ;;;;; org configs
@@ -7476,13 +7445,5 @@ function to apply the changes."
 ;; Bind a convenient prefix (optional)
 ;; (setq efrit-enable-global-keymap t)
 ;; (efrit-setup-keybindings)
-
-;;;; AI : ECA + WHISPER
-
-(add-to-list 'load-path "~/sync/emacs/doomemacs-config/lisp/")
-(require 'ai-eca-whisper)
-(require 'ai-agent-shell)
-(require 'keybindings-remap)
-(require 'project-config)
 
 ;;; left blank on purpose

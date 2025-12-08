@@ -17,7 +17,6 @@
 
 ;;;; global-unset-key
 
-(global-unset-key (kbd "M-a"))  ; unset forward-sentence -> use ')'
 (global-unset-key (kbd "M-c"))  ; unset capitalize-word
 (global-unset-key (kbd "M-i"))  ; tab-to-tab-stop
 (global-unset-key (kbd "M-e"))  ; unset backward-sentence -> use '('
@@ -238,27 +237,27 @@
 ;; Key-bind `org-remark-mark' to global-map so that you can call it
 ;; globally before the library is loaded.
 
-(when (locate-library "org-remark")
-  (define-prefix-command 'org-remark-map)
+;; (when (locate-library "org-remark")
+;;   (define-prefix-command 'org-remark-map)
 
-  (global-set-key (kbd "<f10> M-r") 'org-remark-mark)
+;;   (global-set-key (kbd "<f10> M-r") 'org-remark-mark)
 
-  (define-key global-map (kbd "C-c r") 'org-remark-map)
-  (let ((map org-remark-map))
-    ;; The rest of keybidings are done only on loading `org-remark'
-    (define-key map (kbd "m") #'org-remark-mark)
-    (define-key map (kbd "l") #'org-remark-mark-line)
-    (define-key map (kbd "k") #'org-remark-change))
+;;   (define-key global-map (kbd "C-c r") 'org-remark-map)
+;;   (let ((map org-remark-map))
+;;     ;; The rest of keybidings are done only on loading `org-remark'
+;;     (define-key map (kbd "m") #'org-remark-mark)
+;;     (define-key map (kbd "l") #'org-remark-mark-line)
+;;     (define-key map (kbd "k") #'org-remark-change))
 
-  (with-eval-after-load 'org-remark
-    (define-key org-remark-mode-map (kbd "C-c r o") #'org-remark-open)
-    (define-key org-remark-mode-map (kbd "C-c r r") #'org-remark-remove)
-    (define-key org-remark-mode-map (kbd "C-c r ]") #'org-remark-view-next)
-    (define-key org-remark-mode-map (kbd "C-c r [") #'org-remark-view-prev)
-    ;; (define-key org-remark-mode-map (kbd "C-c r n") #'org-remark-view-next)
-    ;; (define-key org-remark-mode-map (kbd "C-c r p") #'org-remark-view-prev)
-    )
-  )
+;;   (with-eval-after-load 'org-remark
+;;     (define-key org-remark-mode-map (kbd "C-c r o") #'org-remark-open)
+;;     (define-key org-remark-mode-map (kbd "C-c r r") #'org-remark-remove)
+;;     (define-key org-remark-mode-map (kbd "C-c r ]") #'org-remark-view-next)
+;;     (define-key org-remark-mode-map (kbd "C-c r [") #'org-remark-view-prev)
+;;     ;; (define-key org-remark-mode-map (kbd "C-c r n") #'org-remark-view-next)
+;;     ;; (define-key org-remark-mode-map (kbd "C-c r p") #'org-remark-view-prev)
+;;     )
+;;   )
 
 ;;;;; puni
 
@@ -1781,16 +1780,16 @@ window."
   "C-j" #'org-noter-pdf-next-page
   "C-k" #'org-noter-pdf-prev-page)
 
-(defvar-keymap ews-org-transclusion-map
-  :doc "Emacs org-transclusion keymap."
-  "u" #'org-transclusion-add
-  "U" #'org-transclusion-add-all
-  "d" #'org-transclusion-remove
-  "D" #'org-transclusion-remove-all
-  "l" #'org-transclusion-demote-subtree
-  "h" #'org-transclusion-promote-subtree
-  "r" #'org-transclusion-refresh
-  "g" #'org-transclusion-move-to-source)
+;; (defvar-keymap ews-org-transclusion-map
+;;   :doc "Emacs org-transclusion keymap."
+;;   "u" #'org-transclusion-add
+;;   "U" #'org-transclusion-add-all
+;;   "d" #'org-transclusion-remove
+;;   "D" #'org-transclusion-remove-all
+;;   "l" #'org-transclusion-demote-subtree
+;;   "h" #'org-transclusion-promote-subtree
+;;   "r" #'org-transclusion-refresh
+;;   "g" #'org-transclusion-move-to-source)
 
 (defvar-keymap denote-sequence-map
   :doc "Emacs denote-sequence keymap."
@@ -2013,7 +2012,7 @@ window."
 
   "t" #'denote-type
 
-  "u" ews-org-transclusion-map
+  ;; "u" ews-org-transclusion-map
 
   "r" #'denote-region ; "contents" mnemonic
   "," #'denote-rename-file-using-front-matter
@@ -2165,7 +2164,7 @@ window."
       "b" `("Bibliography" . ,ews-bibliography-map)
       "x" `("Denote-Explore" . ,ews-denote-explore-map)
       ;; "o" `("Org-noter" . ,ews-org-noter-map)
-      "u" `("Org-Transclusion" . ,ews-org-transclusion-map)
+      ;; "u" `("Org-Transclusion" . ,ews-org-transclusion-map)
       "e" `("denote-extra" . ,ews-denote-extra-map)
       "s" `("denote-search" . ,denote-search-map)
       "M-s" `("denote-sequence" . ,denote-sequence-map)

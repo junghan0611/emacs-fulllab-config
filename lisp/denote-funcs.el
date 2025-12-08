@@ -192,7 +192,6 @@ Adds refile metadata to the heading."
 ;;;; Split and Capture
 ;;;;; 13.3. Split an Org subtree into its own note
 
-
 (defun my/denote-org-extract-subtree (&optional silo)
   "Create new Denote note using current Org subtree.
 Make the new note use the Org file type, regardless of the value
@@ -1067,98 +1066,6 @@ replacement."
       (delete-matching-lines "^#\\+filetags:.*$" (point-min) (point-max))
       (denote--add-front-matter file title kwds id type)
       (delete-matching-lines "^$" (point) (- (point) 1)))))
-
-;;;; my/denote-transient
-
-(progn
-  ;; https://gist.github.com/ashton314/1de93821d255412cdadfbcf98cd30cad
-  (transient-define-prefix my/denote-transient ()
-    "Denote dispatch"
-    [["Note creation (d)"
-      ("dd" "new note" denote)
-      ("dj" "new or existing journal entry" denote-journal-new-or-existing-entry)
-      ("dn" "open or new" denote-open-or-create)
-      ("dt" "new specifying date and time" denote-date)
-      ("ds" "create in subdirectory " denote-subdirectory)]
-     ["Reviewing (r)"
-      ("rd" "notes this day" aw/notes-this-day)]
-     ["Folgezettel (f)"
-      ("fc" "create parent/child/sibling" denote-sequence)
-      ("ff" "find parent/child/sibling notes" denote-sequence-find)
-      ("fr" "reparent (adopt) current note into another sequence" denote-sequence-reparent)
-      ("fp" "find previous sibling" denote-sequence-find-previous-sibling :transient t)
-      ("fn" "find next sibling" denote-sequence-find-next-sibling :transient t)]]
-    [["Bookkeeping (b)"
-      ("br" "prompt and rename" denote-rename-file)
-      ("bf" "rename with frontmatter" denote-rename-file-using-front-matter)
-      ("bk" "modify keywords" denote-rename-file-keywords)]
-     ["Linking (l)"
-      ("li" "insert link" denote-link)
-      ("lh" "insert link to org heading" denote-org-link-to-heading)
-      ("lb" "show backlinks" denote-backlinks)
-      ("lg" "visit backlink" denote-find-backlink)
-      ("lo" "org backlink block" denote-org-dblock-insert-backlinks)]]
-    [["Searching (s)"
-      ("sd" "deft" deft)
-      ("sn" "consult-notes" consult-notes)
-      ("ss" "consult-notes search" consult-notes-search-in-all-notes)]])
-
-  ;; optional function to gather notes from previous years
-  (defun aw/notes-this-day ()
-    "Display files of the form '20..mmdd.*' in the current directory,
-where 'mm-dd' are the current month and day."
-    (interactive)
-    (let* ((month-day (format-time-string "%m%d"))
-           (this-day-matching (concat "20[[:digit:]][[:digit:]]" month-day ".*\\.\\(txt\\|org\\|md\\)"))
-           (note-files-this-day (directory-files-recursively "." this-day-matching nil
-                                                             (lambda (dirname) (not (string-search ".git/objects" dirname))))))
-
-      ;; make a buffer and fill it with the contents
-      (let ((buff (generate-new-buffer "*Notes on this day*")))
-        (set-buffer buff)                   ; Make this buffer current
-        (org-mode)
-        ;; (insert "* Notes on this day *\n")
-        (mapc (lambda (notes-file)
-                (progn
-                  (insert "\n------------------------------------------------------------\n")
-                  (insert (concat "[[file:" notes-file "][" notes-file "]]"))          ; File name, as a hyperlink
-                  (insert "\n")
-                  (insert-file-contents notes-file)
-                  (end-of-buffer)))
-              note-files-this-day)
-        (read-only-mode)
-        (display-buffer-in-direction buff '((direction . rightmost))))))
-  )
-
-;;;; my/denote-links-this-week
-
-;; [[denote:20250904T084109][#LLM: 20250904T084109]]
-(defun my/denote-links-this-week (&optional arg)
-  "Insert a =denote-links= block for this week.
-Default is the week containing today.
-With universal argument ARG (\\[universal-argument]), prompt for a date
-via =calendar-read-date=."
-  (interactive "P")
-  (let* ((date (if arg
-                   (calendar-read-date) ;; (month day year)
-                 (list (string-to-number (format-time-string "%m"))
-                       (string-to-number (format-time-string "%d"))
-                       (string-to-number (format-time-string "%Y")))))
-         (month (nth 0 date))
-         (day   (nth 1 date))
-         (year  (nth 2 date))
-         (time  (encode-time 0 0 0 day month year))
-         ;; ISO weekday: 1=Monday … 7=Sunday
-         (dow (string-to-number (format-time-string "%u" time)))
-         (monday (time-subtract time (days-to-time (1- dow))))
-         (dates (mapcar (lambda (i)
-                          (format-time-string "%Y%m%d"
-                                              (time-add monday (days-to-time i))))
-                        (number-sequence 0 6)))
-         (regexp (mapconcat (lambda (d) (concat d "T*")) dates "\\\\|")))
-    (insert
-     (format "#+BEGIN: denote-links :regexp \"%s\" :not-regexp nil :excluded-dirs-regexp \"\\\\(journal\\\\|office\\\\|archive\\\\|md\\\\|dict\\\\|posts\\\\|private\\\\|ekg\\\\)\" :sort-by-component nil :reverse-sort t :id-only nil :include-date t\n#+END:\n"
-             regexp))))
 
 ;;;; provide
 
