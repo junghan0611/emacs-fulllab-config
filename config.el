@@ -2446,15 +2446,15 @@ only those in the selected frame."
 
 ;;;;;; org-bookmarks with link
 
-(use-package! org-bookmarks
-  :defer t
-  :after org
-  :commands (org-bookmarks)
-  :init (setq org-bookmarks-file (my/org-links-file))
-  ;; :config
-  ;; (org-bookmarks-add-org-capture-template t)
-  ;; (org-bookmarks-add-org-capture-template)
-  )
+;; (use-package! org-bookmarks
+;;   :defer t
+;;   :after org
+;;   :commands (org-bookmarks)
+;;   :init (setq org-bookmarks-file (my/org-links-file))
+;;   ;; :config
+;;   ;; (org-bookmarks-add-org-capture-template t)
+;;   ;; (org-bookmarks-add-org-capture-template)
+;;   )
 
 ;;;;;; org-ql
 
@@ -5476,10 +5476,8 @@ Suitable for `imenu-create-index-function'."
 (after! org
   (message "after org - config")
 
-  (require 'org-funcs)
-  (require 'org-config)
-  ;; (load-file (concat user-dotemacs-dir "lisp/org-funcs.el"))
-  ;; (load-file (concat user-dotemacs-dir "lisp/org-config.el"))
+  (load-file (concat user-dotemacs-dir "lisp/org-funcs.el"))
+  (load-file (concat user-dotemacs-dir "lisp/org-config.el"))
   ;; (+org-init-keybinds-h) -> 2024-06-01 여기 키바인딩 관련 부분 뒤에서 다시 잡아줌
   ;; (setq org-attach-use-inheritance nil) ; selective
 
@@ -5611,28 +5609,28 @@ Suitable for `imenu-create-index-function'."
 
 ;;;;;; org-bookmarks
 
-(after! org
-  (require 'org-bookmarks)
-  (add-to-list 'org-capture-templates
-               `("b" ,(format "%s\tAdd a new bookmark to %s"
-                              (when (fboundp 'nerd-icons-mdicon)
-                                (nerd-icons-mdicon
-                                 "nf-md-bookmark_plus_outline"
-                                 :face 'nerd-icons-blue))
-                              (file-name-nondirectory org-bookmarks-file))
-                 entry (file ,(expand-file-name org-bookmarks-file))
-                 ,(concat
-                   "* %^{bookmark title}\t\t\t\t"
-                   (format ":%s:" org-bookmarks-tag)
-                   "
-:PROPERTIES:
-:URL:  %^C
-:DATE: %t
-:END:")
-                 :empty-lines 1
-                 :jump-to-captured t
-                 :refile-targets ((,org-bookmarks-file :maxlevel 3)))
-               :append))
+;; (after! org
+;;   (require 'org-bookmarks)
+;;   (add-to-list 'org-capture-templates
+;;                `("b" ,(format "%s\tAdd a new bookmark to %s"
+;;                               (when (fboundp 'nerd-icons-mdicon)
+;;                                 (nerd-icons-mdicon
+;;                                  "nf-md-bookmark_plus_outline"
+;;                                  :face 'nerd-icons-blue))
+;;                               (file-name-nondirectory org-bookmarks-file))
+;;                  entry (file ,(expand-file-name org-bookmarks-file))
+;;                  ,(concat
+;;                    "* %^{bookmark title}\t\t\t\t"
+;;                    (format ":%s:" org-bookmarks-tag)
+;;                    "
+;; :PROPERTIES:
+;; :URL:  %^C
+;; :DATE: %t
+;; :END:")
+;;                  :empty-lines 1
+;;                  :jump-to-captured t
+;;                  :refile-targets ((,org-bookmarks-file :maxlevel 3)))
+;;                :append))
 
 ;;;;; org-journal
 

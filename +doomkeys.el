@@ -1479,24 +1479,96 @@
 
 ;;;;  vterm-mode-map
 
-
 (after! vterm
-
-  ;; sync/code/default/claude-code.el/claude-code.el
   (defun my/vterm-send-alt-return ()
     "Send <alt>-<return> to vterm."
     (interactive)
     (vterm-send-key "" nil t))
 
-  (setq vterm-always-compile-module t) ;; Compile Vterm without asking.
-  (undefine-key! vterm-mode-map "M-," "M-e" "M-." "M-1" "M-2" "M-3" "M-4" "M-5" "M-6" "M-7" "M-8" "M-9" "M-0") ;; 2025-07-13 Simpler
+  (setq vterm-always-compile-module t)
+
+  (undefine-key! vterm-mode-map
+    "M-," "M-e" "M-." "M-1" "M-2" "M-3" "M-4" "M-5" "M-6" "M-7" "M-8" "M-9" "M-0")
+
+  ;; 한글 "ㅑ" 키를 evil의 i처럼 동작시키기 (vterm 버퍼에서 normal/visual → insert)
+  (evil-define-key 'normal vterm-mode-map (kbd "ㅑ") #'evil-insert-state)
+  (evil-define-key 'visual vterm-mode-map (kbd "ㅑ") #'evil-insert-state)
+
   (map! :map vterm-mode-map
         :i "M-RET" #'my/vterm-send-alt-return
         :inv "M-y" #'vterm-yank-pop
         :inv "M-h" #'other-window
         :inv "M-z" #'evil-collection-vterm-toggle-send-escape
-        :inv "M-u" 'evil-scroll-up
-        :inv "M-v" 'evil-scroll-down)
+        :inv "M-u" #'evil-scroll-up
+        :inv "M-v" #'evil-scroll-down)
+
+  ;; vterm에서 evil-normal/visual 상태일 때 한글 자판을 영어 키보드 자판으로 해석하기
+  (defvar my/vterm-hangul-to-english-alist
+    '(("ㅂ" . "q")
+      ("ㅈ" . "w")
+      ("ㄷ" . "e")
+      ("ㄱ" . "r")
+      ("ㅅ" . "t")
+      ("ㅛ" . "y")
+      ("ㅕ" . "u")
+      ("ㅑ" . "i")
+      ("ㅐ" . "o")
+      ("ㅔ" . "p")
+      ("ㅁ" . "a")
+      ("ㄴ" . "s")
+      ("ㅇ" . "d")
+      ("ㄹ" . "f")
+      ("ㅎ" . "g")
+      ("ㅗ" . "h")
+      ("ㅓ" . "j")
+      ("ㅏ" . "k")
+      ("ㅣ" . "l")
+      ("ㅋ" . "z")
+      ("ㅌ" . "x")
+      ("ㅊ" . "c")
+      ("ㅍ" . "v")
+      ("ㅠ" . "b")
+      ("ㅜ" . "n")
+      ("ㅡ" . "m"))
+    "Hangul → English key translation table for vterm + evil normal/visual states.")
+
+  (defvar-local my/vterm-original-key-translation-map nil)
+  (defvar-local my/vterm-hangul-key-translation-map nil)
+
+  (defun my/vterm-build-hangul-translation-map ()
+    "Build a key-translation map that interprets Hangul keys as English keys."
+    (let ((map (make-sparse-keymap)))
+      (set-keymap-parent map (or my/vterm-original-key-translation-map
+                                 (default-value 'key-translation-map)))
+      (dolist (pair my/vterm-hangul-to-english-alist)
+        (define-key map (kbd (car pair)) (kbd (cdr pair))))
+      map))
+
+  (defun my/vterm-init-hangul-translation ()
+    "Initialize Hangul → English translation maps for this vterm buffer."
+    (setq-local my/vterm-original-key-translation-map key-translation-map)
+    (setq-local my/vterm-hangul-key-translation-map
+                (my/vterm-build-hangul-translation-map)))
+
+  (defun my/vterm-enable-hangul-translation ()
+    "Enable Hangul → English key translation in this vterm buffer."
+    (when (and (derived-mode-p 'vterm-mode)
+               my/vterm-hangul-key-translation-map)
+      (setq-local key-translation-map my/vterm-hangul-key-translation-map)))
+
+  (defun my/vterm-disable-hangul-translation ()
+    "Disable Hangul → English key translation in this vterm buffer."
+    (when (derived-mode-p 'vterm-mode)
+      (setq-local key-translation-map my/vterm-original-key-translation-map)))
+
+  (add-hook 'vterm-mode-hook #'my/vterm-init-hangul-translation)
+
+  (add-hook 'evil-normal-state-entry-hook #'my/vterm-enable-hangul-translation)
+  (add-hook 'evil-visual-state-entry-hook #'my/vterm-enable-hangul-translation)
+  (add-hook 'evil-motion-state-entry-hook #'my/vterm-enable-hangul-translation)
+
+  (add-hook 'evil-insert-state-entry-hook #'my/vterm-disable-hangul-translation)
+  (add-hook 'evil-emacs-state-entry-hook  #'my/vterm-disable-hangul-translation)
   )
 
 ;;;; prog-mode-map
