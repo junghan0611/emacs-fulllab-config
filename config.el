@@ -119,9 +119,8 @@
     (read (format "%s" output))))  ; read 함수는 17.0을 실수로 파싱
 
 (when (display-graphic-p) ; gui
-  (setq doom-font (font-spec :family "GLG Nerd Font Mono" :size (get-font-size-from-script))
-        doom-big-font (font-spec :family "GLG Nerd Font Mono" :size 23.0))
-  ;; (setq doom-font (font-spec :family "Sarasa Term K Nerd Font" :size 13.6)
+  (setq doom-font (font-spec :family "Sarasa Term K Nerd Font" :size (get-font-size-from-script)) ; "GLG Nerd Font Mono"
+        doom-big-font (font-spec :family "Sarasa Term K Nerd Font" :size 23.0))
   ;;       doom-big-font (font-spec :family "Sarasa Term K Nerd Font" :size 18.0))
   (setq doom-variable-pitch-font (font-spec :family "Pretendard Variable" :size (get-font-size-from-script)))
   (setq doom-unicode-font (font-spec :family "Symbola" :size (get-font-size-from-script)))
@@ -1263,13 +1262,6 @@ only those in the selected frame."
   (add-to-list 'vterm-environment "QT_IM_MODULE=fcitx5")
   (add-to-list 'vterm-environment "XMODIFIERS=@im=fcitx5")
   (setq vterm-shell "/usr/bin/bash")
-
-  (defun my/vterm-setup-gtk-use-native-input ()
-    "Setup native input for vterm buffer"
-    (interactive)
-    (when (eq major-mode 'vterm-mode)
-      (setq-local x-gtk-use-native-input t)))
-  ;; (add-hook 'vterm-mode-hook #'my/vterm-setup-gtk-use-native-input 90)
 
   (defun my/vterm-setup-terminal-font ()
     "Setup terminal font for vterm using fontaine"
@@ -2506,22 +2498,30 @@ only those in the selected frame."
 (progn
   (require 'citar)
   (require 'bibtex)
-  (setq citar-bibliography config-bibfiles)
-  (setq org-cite-global-bibliography config-bibfiles)
-  (setq bibtex-files config-bibfiles)
-
-  ;; use #+cite_export: csl apa.csl
-  (setq org-cite-csl-styles-dir (concat user-org-directory ".csl"))
-  (setq citar-citeproc-csl-styles-dir (concat user-org-directory ".csl"))
-  ;; (setq citar-citeproc-csl-locales-dir "~/.csl/locales")
-  ;; (setq citar-citeproc-csl-style "apa.csl") ; ieee.csl
-
+  ;; HUGO for quartz
+  ;; Setup export processor; default csl/citeproc-el, with biblatex for latex
   ;; (setq citar-notes-paths '("~/sync/org/bib/"))
-  (setq citar-notes-paths (list (concat org-directory "bib/")))
-  (setq citar-symbol-separator " ")
 
-  ;; (setq citar-format-reference-function 'citar-citeproc-format-reference)
-  (setq citar-format-reference-function 'citar-format-reference)
+  (when (boundp 'config-bibfiles)
+    (setq citar-notes-paths (list (concat org-directory "bib/")))
+    (setq citar-bibliography config-bibfiles)
+    (setq bibtex-files config-bibfiles)
+    (setq org-cite-global-bibliography config-bibfiles))
+
+  ;; CSL styles directory
+  (when (boundp 'org-directory)
+    (setq org-cite-csl-styles-dir (concat org-directory ".csl"))
+    (setq citar-citeproc-csl-styles-dir (concat org-directory ".csl")))
+
+  ;; Setup export processor; default csl/citeproc-el, with biblatex for latex
+  (after! oc
+    (require 'citar-citeproc)
+    (setq bibtex-files config-bibfiles)
+    (setq citar-format-reference-function 'citar-citeproc-format-reference)
+    (setq citar-citeproc-csl-style "apa.csl")
+    ;; org-cite-csl-link-cites t = generate #citeproc_bib_item_N anchor links
+    (setq org-cite-csl-link-cites t)
+    (setq org-cite-export-processors '((latex biblatex) (t csl))))
 
   ;; Managing Bibliographies
   ;; (bibtex-user-optional-fields
@@ -3017,49 +3017,6 @@ only those in the selected frame."
    "You are a large language model living in Emacs and a helpful assistant. Respond concisely using Korean language.")
   (setq gptel--system-message (alist-get 'default gptel-directives))
 
-;;;;;;; 03 - gptel-save-as-org-with-denote-metadata
-
-;;;###autoload
-  (defun gptel-save-as-org-with-denote-metadata ()
-    "Save buffer to disk when starting gptel with metadata."
-    (interactive)
-    (unless (buffer-file-name (current-buffer))
-      (let* ((suffix (format-time-string "%Y%m%dT%H%M%S"))
-             (chat-dir (concat org-directory "/llmlog"))
-             (ext (replace-regexp-in-string "-mode$" "" (symbol-name gptel-default-mode)))
-             (filename (concat suffix "__llmlog" "." ext))
-             (full-path (expand-file-name filename chat-dir)))
-        (unless (file-directory-p chat-dir)
-          (make-directory chat-dir :parents))
-        (write-file full-path)
-
-        ;; Add metadata to the file
-        (goto-char 0) (search-forward ":END:") (end-of-line)
-        (insert (format "\n#+title: #LLM: %s\n" suffix))
-        (insert "#+filetags: :llmlog:\n")
-        (insert (format "#+hugo_lastmod: %s\n" (format-time-string "[%Y-%m-%d]")))
-        (insert (format "#+date: %s\n" (format-time-string "[%Y-%m-%d %a %H:%M]")))
-        (insert (format "#+identifier: %s\n" suffix))
-        (insert (format "#+export_file_name: %s.md\n" suffix))
-        (insert (format "#+description: %s\n" suffix))
-        (insert (format "#+hugo_categories: Noname\n#+OPTIONS: toc:1\n"))
-
-        (insert (format "\n* 히스토리\n- %s Created!" (format-time-string "[%Y-%m-%d %a %H:%M]")))
-        (insert (format "\n* 관련메타\n- \n#+print_bibliography:\n\n"))
-
-        ;; heading-1 add backlink to today
-        (insert (format "* 로그 :LLMLOG:\n** [[denote:%s::#%s][%s]]\n"
-                        ;; (format-time-string "%Y%m%dT000000")
-                        (format-time-string "%Y%m%dT000000"
-                                            (org-journal--convert-time-to-file-type-time
-                                             (time-subtract (current-time)
-                                                            (* 3600 org-extend-today-until))))
-                        (downcase (format-time-string "%Y-%m-%d-%a"))
-                        (format-time-string "|%Y-%m-%d %a %H:%M|")))
-        ;; heading-2 [SUM]:
-        ;; (insert (format "** TODO [SUM]: \n"))
-        (insert "\n"))))
-
 ;;;;;;; 04 - gptel-org-toggle-branching-context
 
   ;; (setf (alist-get 'org-mode gptel-prompt-prefix-alist) "*** @user ")
@@ -3283,14 +3240,14 @@ only those in the selected frame."
             :iv "M-RET" #'gptel-send
             (:localleader
              :desc "gptel/default" "5" #'gptel-menu ;; TODO fixme
-             "M-s" #'gptel-save-as-org-with-denote-metadata
+             ;; "M-s" #'gptel-save-as-org-with-denote-metadata
              "0" #'cashpw/gptel-send
              :desc "gptel/default" "1" (cmd! (cashpw/gptel-send (alist-get 'default gptel-directives)))
              :desc "gptel/chain of thought" "2" (cmd! (cashpw/gptel-send (alist-get 'chain-of-thought gptel-directives)))
              :desc "gptel/follow up" "3" (cmd! (cashpw/gptel-send (alist-get 'follow-up gptel-directives)))
              (:prefix ("s" . "session")
               :desc "clear" "l" #'gptel-clear-buffer+
-              "p" #'gptel-save-as-org-with-denote-metadata
+              ;; "p" #'gptel-save-as-org-with-denote-metadata
               )))))
 
   (add-hook! 'gptel-mode-hook
@@ -5310,161 +5267,6 @@ Suitable for `imenu-create-index-function'."
 
 ;;;; LOAD DOOMEMACS-CONFIG/LISP
 
-(progn
-  (add-to-list 'load-path "~/sync/emacs/doomemacs-config/lisp/")
-  (require 'ai-eca-whisper)
-  (require 'ai-agent-shell)
-  (require 'keybindings-config)
-  (require 'keybindings-remap)
-  (require 'project-config)
-  (require 'time-config)
-  (require 'denote-functions)
-  )
-
-;;;;; doom-modeline
-
-(after! doom-modeline
-  (doom-modeline-def-modeline
-    'main
-    '(eldoc
-      bar
-      persp-name
-      ;; workspace-name - conflict tab-bar
-      window-number
-      modals
-      input-method
-      matches
-      follow
-      buffer-info
-      remote-host
-      buffer-position
-      word-count
-      parrot
-      selection-info)
-    '(compilation
-      objed-state
-      misc-info
-      battery
-      grip
-      irc
-      mu4e
-      gnus
-      github
-      debug
-      repl
-      lsp
-      minor-modes
-      indent-info
-      buffer-encoding
-      major-mode
-      process
-      vcs
-      check
-      time))
-
-  (setq doom-modeline-time nil)
-  (setq doom-modeline-time-icon nil)
-  (setq doom-modeline-minor-modes nil)
-  ;; (setq doom-modeline-battery nil)
-  ;; (setq Info-breadcrumbs-in-mode-line-mode nil)
-  (setq doom-modeline-support-imenu nil)
-
-  ;; UTF-8 is default encoding remove it from modeline
-  ;; frap-dot-doom/ui-old.el
-  (defun doom-modeline-conditional-buffer-encoding ()
-    "We expect the encoding to be LF UTF-8, so only show the modeline when this is not the case"
-    (setq-local doom-modeline-buffer-encoding
-                (unless (or (eq buffer-file-coding-system 'utf-8-unix)
-                            (eq buffer-file-coding-system 'utf-8)))))
-  (add-hook 'after-change-major-mode-hook #'doom-modeline-conditional-buffer-encoding)
-
-  (setq doom-modeline-enable-word-count nil)
-  ;; (setq doom-modeline-continuous-word-count-modes '(markdown-mode gfm-mod)) ; org-mode
-
-  (setq doom-modeline-icon (display-graphic-p))
-  (setq doom-modeline-modal-icon t)
-  (setq doom-modeline-major-mode-icon t)
-  (setq doom-modeline-buffer-modification-icon t)
-
-  (setq doom-modeline-height 35)
-  (setq doom-modeline-bar-width 4)
-
-  (setq doom-modeline-persp-name t) ; doom nil
-  (setq doom-modeline-window-width-limit (- fill-column 5))
-
-  (setq doom-modeline-repl t)
-  (setq doom-modeline-github t)
-  (setq doom-modeline-lsp t)
-  (setq doom-modeline-indent-info t)
-  ;; (setq doom-modeline-hud nil)
-  (setq doom-modeline-buffer-file-name-style 'truncate-upto-project) ; default 'auto
-
-  (remove-hook 'display-time-mode-hook #'doom-modeline-override-time)
-  (remove-hook 'doom-modeline-mode-hook #'doom-modeline-override-time))
-
-;;;;; celestial-mode-line
-
-(use-package! celestial-mode-line
-  :after time
-  :init
-  (setq celestial-mode-line-update-interval 3600) ; default 60
-  (setq celestial-mode-line-sunrise-sunset-alist
-        '((sunrise . "🌅") (sunset . "🌃")))
-  (setq celestial-mode-line-phase-representation-alist
-        '((0 . "🌚") (1 . "🌛") (2 . "🌝") (3 . "🌜")))
-  :config (celestial-mode-line-start-timer)
-  )
-
-;;;;; keycast tab-bar
-
-(use-package! keycast
-  :config
-  ;; (setq keycast-tab-bar-minimal-width 50) ; 40
-  (setq keycast-tab-bar-format "%10s%k%c%r")
-
-  (dolist (input '(self-insert-command org-self-insert-command))
-    (add-to-list 'keycast-substitute-alist `(,input "." "Typing…")))
-  (dolist (event
-           '(mouse-event-p mouse-movement-p
-             mwheel-scroll
-             handle-select-window
-             mouse-set-point
-             mouse-drag-region
-             dired-next-line ; j
-             dired-previous-line ; k
-             next-line
-             previous-line
-             evil-next-line ; j
-             evil-previous-line ; k
-             evil-forward-char ; l
-             evil-backward-char ; h
-             pixel-scroll-interpolate-up ; <prior> page-up
-             pixel-scroll-interpolate-down ; <next> page-down
-
-             pixel-scroll-precision
-             evil-jump-item
-             evil-mouse-drag-region ;; double click
-
-             org-cycle
-             keyboard-quit
-             save-buffer
-             ;; block-toggle-input-method
-             ;; toggle-input-method
-
-             ;; evil-formal-state
-             ;; evil-force-normal-state
-
-             ;; 2023-10-02 Added for clojure-dev
-             ;; lsp-ui-doc--handle-mouse-movement
-             ignore-preserving-kill-region
-             ;; pdf-view-text-region
-             ;; pdf-view-mouse-set-region
-             ;; mouse-set-region
-             ))
-    (add-to-list 'keycast-substitute-alist `(,event nil)))
-  )
-
-
 ;;;; :lang org
 
 ;;;;; org configs
@@ -6131,48 +5933,6 @@ Suitable for `imenu-create-index-function'."
 ;;           (lambda (_) (persp-add-buffer persp-shared-buffers)))
 ;;   )
 
-;;;;; custom tab-bar global-mode-string
-
-(progn
-  (require 'tab-bar)
-
-  ;; 2025-01-26
-  (setq tab-bar-close-button-show nil)
-  (setq tab-bar-new-button-show nil)
-
-  (setq tab-bar-format
-        '( ;; tab-bar-format-history
-          tab-bar-format-tabs
-          tab-bar-separator
-          tab-bar-format-add-tab
-          tab-bar-format-align-right
-          tab-bar-format-global
-          ))
-
-;;;;###autoload
-  (defun my/load-global-mode-string ()
-    (interactive)
-
-    ;; (message "my/load-global-mode-string")
-    (when (not (bound-and-true-p display-time-mode))
-      (display-time-mode t))
-
-    ;; (when (fboundp 'display-time-mode)
-    ;;   (display-time-mode t))
-
-    (setq global-mode-string (remove 'display-time-string global-mode-string))
-    (setq global-mode-string '("" celestial-mode-line-string display-time-string))
-
-    (tab-bar-mode +1)
-
-    ;; (when (string= (system-name) "jhnuc")
-    ;;   (keycast-tab-bar-mode +1))
-    )
-
-  (add-hook 'doom-after-init-hook #'my/load-global-mode-string 80)
-  (add-hook 'doom-after-reload-hook #'my/load-global-mode-string)
-  )
-
 ;;;;; my/workspaces
 
 ;;;;###autoload
@@ -6422,14 +6182,6 @@ Suitable for `imenu-create-index-function'."
 ;;;;; DONT literate-calc-mode
 
 ;; (use-package! literate-calc-mode)
-
-;;;; HUGO for quartz
-
-;; Setup export processor; default csl/citeproc-el, with biblatex for latex
-(after! oc
-  (require 'citar-citeproc)
-  (setq org-cite-csl-link-cites nil) ; default t
-  (setq org-cite-export-processors '((latex biblatex) (t csl))))
 
 ;;;; TODO Load +llm summarize-buffer
 
@@ -7128,13 +6880,21 @@ function to apply the changes."
 ;; check  'C-h v' eaf-var-list
 
 ;; (progn
-;;   (setq eaf-python-command "/usr/bin/python")
+;;   ;;  (setq eaf-python-command "/usr/bin/python")
 ;;   (require 'eaf)
 ;;   (require 'eaf-browser)
-;;   (require 'eaf-pdf-viewer)
-;;   (require 'eaf-mind-elixir)
+;;   ;; (require 'eaf-terminal)
+;;   (require 'eaf-pyqterminal)
+;;   ;; (require 'eaf-pdf-viewer)
+;;   ;; (require 'eaf-mind-elixir)
 
 ;;   (add-hook 'eaf-mode-hook #'doom-mark-buffer-as-real-h)
+
+;;   (defun my/eaf-setup-gtk-use-native-input ()
+;;     (interactive)
+;;     (when (eq major-mode 'eaf-mode)
+;;       (setq-local x-gtk-use-native-input t)))
+;;   (add-hook 'eaf-mode-hook #'my/eaf-setup-gtk-use-native-input)
 
 ;;   (progn
 ;;     ;; https://github.com/emacs-eaf/emacs-application-framework/wiki/Evil
@@ -7186,12 +6946,13 @@ function to apply the changes."
 ;;             ;; Search entered text
 ;;             (eaf-search-it selected)))))
 ;;     (setq eaf-browser-continue-where-left-off t)
-;;     (setq eaf-browser-dnefault-search-engine "duckduckgo")
+;;     (setq eaf-browser-default-search-engine "duckduckgo")
 ;;     (setq eaf-browser-enable-adblocker "true")
 ;;     ;; (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
 ;;     ;; (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
 ;;     )
-;;   ) ;; end-of eaf
+;;   )
+;; end-of eaf
 
 ;;;; :custom 'Local' Packages
 
@@ -7382,13 +7143,6 @@ function to apply the changes."
   (add-to-list 'vterm-environment "QT_IM_MODULE=fcitx5")
   (add-to-list 'vterm-environment "XMODIFIERS=@im=fcitx5")
 
-  (defun my/vterm-setup-gtk-use-native-input ()
-    "Setup native input for vterm buffer"
-    (interactive)
-    (when (eq major-mode 'vterm-mode)
-      (setq-local x-gtk-use-native-input t)))
-  ;; (add-hook 'vterm-mode-hook #'my/vterm-setup-gtk-use-native-input 90)
-
   (defun my/vterm-setup-terminal-font ()
     "Setup terminal font for vterm using fontaine"
     (when (and (eq major-mode 'vterm-mode)
@@ -7405,43 +7159,5 @@ function to apply the changes."
                                         fontaine-current-preset :term-family))))
   (add-hook 'vterm-mode-hook #'my/vterm-setup-terminal-font)
   )
-
-;;;; efrit
-
-(progn
-  ;; Load path 설정 (서브디렉토리 포함)
-  (let ((efrit-base "~/repos/gh/efrit/lisp"))
-    (add-to-list 'load-path (expand-file-name efrit-base))
-    (add-to-list 'load-path (expand-file-name "core" efrit-base))
-    (add-to-list 'load-path (expand-file-name "interfaces" efrit-base))
-    (add-to-list 'load-path (expand-file-name "support" efrit-base))
-    (add-to-list 'load-path (expand-file-name "tools" efrit-base)))
-
-  ;; 데이터 디렉토리 (로드 전에 설정)
-  (setq efrit-data-directory (expand-file-name "~/efrit-data"))
-
-  ;; 코어 모듈 로드
-  (require 'efrit)
-
-  ;; OpenRouter 지원 (새 파일)
-  (require 'efrit-openrouter)
-
-  ;; OpenRouter 설정
-  (setq efrit-api-backend 'openrouter)
-  (setq efrit-openrouter-model "anthropic/claude-sonnet-4-5")  ;; 변수명 변경!
-  (setq efrit-api-auth-source-host "openrouter.ai")
-  (setq efrit-api-auth-source-user "apikey")
-
-  (message "✅ Efrit with OpenRouter support loaded!"))
-
-;; authinfo.gpg 확인
-;; (auth-source-search :host "openrouter.ai" :max 1)
-
-;; Set data directory before loading to avoid side effects
-;; Optional: disable auto-initialize to control when directories are created
-;; (setq efrit-auto-initialize nil)
-;; Bind a convenient prefix (optional)
-;; (setq efrit-enable-global-keymap t)
-;; (efrit-setup-keybindings)
 
 ;;; left blank on purpose

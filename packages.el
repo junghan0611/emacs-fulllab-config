@@ -107,8 +107,7 @@
 (package! major-mode-hydra)
 
 (package! modus-themes)
-;; (package! ef-themes)
-;; (package! doric-themes)
+(package! doric-themes)
 
 (package! show-font)
 (package! hammy) ; cutte timmer
@@ -320,6 +319,13 @@
 
 (package! whisper :recipe (:host github :repo "natrys/whisper.el"))
 (package! eca :recipe (:host github :repo "editor-code-assistant/eca-emacs" :files ("*.el")))
+
+
+;;;;; Efrit (Steve Yegge's AI Assistant)
+
+;; Use junghan0611/efrit-ko fork with OpenRouter backend support
+(package! efrit :recipe (:host github :repo "junghan0611/efrit" :files ("lisp/*.el")))
+(package! beads :recipe (:host github :repo "r0man/beads.el"))
 
 ;;;; ACP (Agent Client Protocol)
 
@@ -556,60 +562,76 @@
 
 ;;;; DONT Emacs Application Framework (EAF)
 
-;; (progn
-;;   (defun +eaf-install-deps-for-app(app-dir)
-;;     "Install deps from dependencies.json."
-;;     (let* ((deps-dict (with-temp-buffer
-;;                         (insert-file-contents
-;;                          (expand-file-name "dependencies.json" app-dir))
-;;                         (json-parse-string (buffer-string))))
-;;            (pip-deps (gethash (if IS-LINUX "linux" "darwin")
-;;                               (or (gethash "pip" deps-dict)
-;;                                   (make-hash-table))))
-;;            (vue-install (gethash "vue_install" deps-dict))
-;;            (npm-install (gethash "npm_install" deps-dict))
-;;            (npm-rebuild (gethash "npm_rebuild" deps-dict)))
-;;       (when pip-deps
-;;         (dolist (pkg (append pip-deps nil))
-;;           (message "%s" (shell-command-to-string (format "pip install %s" pkg)))))
-;;       (when vue-install
-;;         (let ((default-directory app-dir))
-;;           (message "%s" (shell-command-to-string "npm install"))
-;;           (message "%s" (shell-command-to-string "npm run build"))))
-;;       (when npm-install
-;;         (let ((default-directory app-dir))
-;;           (message "%s" (shell-command-to-string "npm install"))))
-;;       (when npm-rebuild
-;;         (let ((default-directory app-dir))
-;;           (message "%s" (shell-command-to-string "npm rebuild"))))))
+(progn
+  (defun +eaf-install-deps-for-app(app-dir)
+    "Install deps from dependencies.json."
+    (let* ((deps-dict (with-temp-buffer
+                        (insert-file-contents
+                         (expand-file-name "dependencies.json" app-dir))
+                        (json-parse-string (buffer-string))))
+           (pip-deps (gethash (if IS-LINUX "linux" "darwin")
+                              (or (gethash "pip" deps-dict)
+                                  (make-hash-table))))
+           (vue-install (gethash "vue_install" deps-dict))
+           (npm-install (gethash "npm_install" deps-dict))
+           (npm-rebuild (gethash "npm_rebuild" deps-dict)))
+      (when pip-deps
+        (dolist (pkg (append pip-deps nil))
+          (message "%s" (shell-command-to-string (format "pip install %s" pkg)))))
+      (when vue-install
+        (let ((default-directory app-dir))
+          (message "%s" (shell-command-to-string "npm install"))
+          (message "%s" (shell-command-to-string "npm run build"))))
+      (when npm-install
+        (let ((default-directory app-dir))
+          (message "%s" (shell-command-to-string "npm install"))))
+      (when npm-rebuild
+        (let ((default-directory app-dir))
+          (message "%s" (shell-command-to-string "npm rebuild"))))))
 
-;;   (package! eaf
-;;     :recipe (:host github :repo "emacs-eaf/emacs-application-framework"
-;;              :files ("*")
-;;              :post-build
-;;              (shell-command "/usr/bin/python install-eaf.py --install-core-deps"))) ;; use builtin python
+  (package! eaf
+    :recipe (:host github :repo "emacs-eaf/emacs-application-framework"
+             :files ("*")
+             :post-build
+             (shell-command "/usr/bin/python install-eaf.py --install-core-deps"))) ;; use builtin python
 
-;;   (package! eaf-browser
-;;     :recipe (:host github :repo "emacs-eaf/eaf-browser"
-;;              :files ("*")
-;;              :post-build
-;;              (+eaf-install-deps-for-app
-;;               (concat straight-base-dir "/straight/" straight-build-dir "/eaf-browser"))))
+  (package! eaf-browser
+    :recipe (:host github :repo "emacs-eaf/eaf-browser"
+             :files ("*")
+             :post-build
+             (+eaf-install-deps-for-app
+              (concat straight-base-dir "/straight/" straight-build-dir "/eaf-browser"))))
 
-;;   (package! eaf-pdf-viewer
-;;     :recipe (:host github :repo "emacs-eaf/eaf-pdf-viewer"
-;;              :files ("*")
-;;              :post-build
-;;              (+eaf-install-deps-for-app
-;;               (concat straight-base-dir "/straight/" straight-build-dir "/eaf-pdf-viewer"))))
+  ;;https://github.com/mumu-lhl/eaf-pyqterminal?tab=readme-ov-file
+  ;; git@github.com:emacs-eaf/eaf-terminal.git
+  ;; (package! eaf-terminal
+  ;;   :recipe (:host github :repo "emacs-eaf/eaf-terminal"
+  ;;            :files ("*")
+  ;;            :post-build
+  ;;            (+eaf-install-deps-for-app
+  ;;             (concat straight-base-dir "/straight/" straight-build-dir "/eaf-terminal"))))
 
-;;   (package! eaf-mind-elixir
-;;     :recipe (:host github :repo "emacs-eaf/eaf-mind-elixir"
-;;              :files ("*")
-;;              :post-build
-;;              (+eaf-install-deps-for-app
-;;               (concat straight-base-dir "/straight/" straight-build-dir "/eaf-mind-elixir"))))
-;;   )
+  (package! eaf-pyqterminal
+    :recipe (:host github :repo "mumu-lhl/eaf-pyqterminal"
+             :files ("*")
+             :post-build
+             (+eaf-install-deps-for-app
+              (concat straight-base-dir "/straight/" straight-build-dir "/eaf-pyqterminal"))))
+
+  ;; (package! eaf-pdf-viewer
+  ;;   :recipe (:host github :repo "emacs-eaf/eaf-pdf-viewer"
+  ;;            :files ("*")
+  ;;            :post-build
+  ;;            (+eaf-install-deps-for-app
+  ;;             (concat straight-base-dir "/straight/" straight-build-dir "/eaf-pdf-viewer"))))
+
+  ;; (package! eaf-mind-elixir
+  ;;   :recipe (:host github :repo "emacs-eaf/eaf-mind-elixir"
+  ;;            :files ("*")
+  ;;            :post-build
+  ;;            (+eaf-install-deps-for-app
+  ;;             (concat straight-base-dir "/straight/" straight-build-dir "/eaf-mind-elixir"))))
+  )
 
 
 ;;; end-of file

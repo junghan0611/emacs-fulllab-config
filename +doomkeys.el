@@ -1206,7 +1206,7 @@
 
 (map! :map dired-mode-map
       :n "r" #'revert-buffer
-      :inv "M-h" #'other-window
+      :inv "M-\\" #'other-window
 
       :localleader
       "h" #'dired-omit-mode
@@ -1497,7 +1497,7 @@
   (map! :map vterm-mode-map
         :i "M-RET" #'my/vterm-send-alt-return
         :inv "M-y" #'vterm-yank-pop
-        :inv "M-h" #'other-window
+        :inv "M-\\" #'other-window
         :inv "M-z" #'evil-collection-vterm-toggle-send-escape
         :inv "M-u" #'evil-scroll-up
         :inv "M-v" #'evil-scroll-down)
@@ -1574,7 +1574,7 @@
 ;;;; prog-mode-map
 
 (map! :map prog-mode-map
-      :inv "M-h" #'other-window
+      :inv "M-\\" #'other-window
       )
 
 ;;;; outli-mode-map / markdown-mode-map

@@ -121,7 +121,7 @@
 
 (set-clipboard-coding-system 'utf-8)
 
-(setq-default line-spacing 3) ; use fontaine
+;; (setq-default line-spacing 3) ; use fontaine
 
 (setenv "LANG" "ko_KR.UTF-8")
 (setenv "LC_ALL" "ko_KR.UTF-8")

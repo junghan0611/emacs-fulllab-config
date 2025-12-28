@@ -69,7 +69,7 @@ Adds refile metadata to the heading."
 
 ;;;; TODO my/denote-org-dblock-insert
 
-;; 2025-01-21 include-date t and keybindings
+;; 2025-01-21 include-date nil and keybindings
 
 (defun my/denote-org-dblock-insert-backlinks ()
   "Create Org dynamic block to insert Denote backlinks to current file."
@@ -80,7 +80,7 @@ Adds refile metadata to the heading."
                            :reverse-sort nil
                            :id-only nil
                            :this-heading-only nil
-                           :include-date t))
+                           :include-date nil))
   (org-update-dblock))
 ;; denote-org-dblock-insert-links
 
@@ -97,7 +97,7 @@ Adds refile metadata to the heading."
                            :sort-by-component nil
                            :reverse-sort t
                            :id-only nil
-                           :include-date t))
+                           :include-date nil))
   (org-update-dblock)
   )
 
@@ -111,11 +111,11 @@ Adds refile metadata to the heading."
                            :regexp regexp
                            :not-regexp nil
                            :excluded-dirs-regexp
-                             "\\(meta\\|office\\|notes\\|journal\\|posts\\|docs\\|md\\|dict\\|private\\|ekg\\)"
+                           "\\(meta\\|office\\|notes\\|journal\\|posts\\|docs\\|md\\|dict\\|private\\|ekg\\)"
                            :sort-by-component nil
                            :reverse-sort t
                            :id-only nil
-                           :include-date t))
+                           :include-date nil))
   (org-update-dblock)
   )
 
@@ -129,11 +129,11 @@ Adds refile metadata to the heading."
                            :regexp regexp
                            :not-regexp nil
                            :excluded-dirs-regexp
-                             "\\(meta\\|bib\\|office\\|journal\\|posts\\|docs\\|md\\|dict\\|private\\|ekg\\)"
+                           "\\(meta\\|bib\\|office\\|journal\\|posts\\|docs\\|md\\|dict\\|private\\|ekg\\)"
                            :sort-by-component nil
                            :reverse-sort t
                            :id-only nil
-                           :include-date t))
+                           :include-date nil))
   (org-update-dblock)
   )
 
@@ -175,7 +175,7 @@ Adds refile metadata to the heading."
 ;;                              :sort-by-component nil
 ;;                              :reverse-sort t
 ;;                              :id-only nil
-;;                              :include-date t))
+;;                              :include-date nil))
 ;;     (org-update-dblock)
 ;;     ))
 
