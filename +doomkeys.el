@@ -197,22 +197,21 @@
 
 (map! :leader
       (:prefix "h"
-       "SPC" #'consult-info
-       "a" #'helpful-at-point
-       "f" #'helpful-function
-       "D" #'elisp-demos-find-demo
-       "h" #'helpful-symbol
-       "t" nil ; consult-theme
-       :desc "themes-map" "t" ews-modus-themes-map
-       "p" nil
-       (:prefix ("p" . "packages")
-                "l" #'list-packages
-                "f" #'find-library-other-window
-                "p" #'doom/help-packages
-                "d" #'doom/describe-package)
-       "1" #'find-function-other-window
-       "v" #'helpful-variable
-       "j" #'info-display-manual))
+               "SPC" #'consult-info
+               "a" #'helpful-at-point
+               "f" #'helpful-function
+               "D" #'elisp-demos-find-demo
+               "h" #'helpful-symbol
+               "t" nil ; consult-theme
+               "p" nil
+               (:prefix ("p" . "packages")
+                        "l" #'list-packages
+                        "f" #'find-library-other-window
+                        "p" #'doom/help-packages
+                        "d" #'doom/describe-package)
+               "1" #'find-function-other-window
+               "v" #'helpful-variable
+               "j" #'info-display-manual))
 
 ;;;; 'k' lisp
 
@@ -638,14 +637,11 @@
        "n" nil
        "S" nil
        ;; default keybindings
-       ;; :desc "ews-annotate-map"             "a" ews-annotate-map
        :desc "ash-goto-agenda"               "A" 'ash-goto-org-agenda
        ;; :desc "consult-org-agenda" "A" #'consult-org-agenda ; M-g a
 
-       :desc "ews-bibliography-map"          "b" ews-bibliography-map
        :desc "org-capture"                   "c" #'org-capture
        :desc "+org/toggle-last-clock"        "C" #'+org/toggle-last-clock
-       :desc "ews-denote-map"                "d" ews-denote-map
 
        :desc "+default/find-in-notes"        "f" #'+default/find-in-notes ; find-files
        :desc "+default/browse-notes"         "F" #'+default/browse-notes
@@ -676,9 +672,7 @@
 
        :desc "consult-org-all"               "'" #'my/consult-org-all
 
-       ;; :desc "ews-note-map"                  "n" ews-note-map
-       :desc "ews-denote-map"                  "n" ews-denote-map))
-
+       ))
 ;; :desc "my/denote-random-note"        "?" #'my/denote-random-note
 ;; :desc "org-roam-random-no-dates"        "?" #'ash/org-roam-node-random-no-dates
 
@@ -1202,40 +1196,6 @@
    "<f9>"   #'imenu-list-smart-toggle
    "<M-f9>" #'spacemacs/imenu-list-smart-focus))
 
-;;;; dired-mode-map
-
-(map! :map dired-mode-map
-      :n "r" #'revert-buffer
-      :inv "M-\\" #'other-window
-
-      :localleader
-      "h" #'dired-omit-mode
-      "SPC" #'dired-hide-details-mode
-      "H" #'dired-hide-details-mode
-      "p" #'dired-preview-mode
-      :desc "sort-modified-date" "o" #'dired-sort-toggle-or-edit
-
-      ;; "m" #'my/dired-attach-to-mastodon
-
-      :desc "*denote-insert* marked-notes" "i" #'my/denote-link-dired-marked-notes
-      "g" #'prot-dired-grep-marked-files
-      "l" #'prot-dired-limit-regexp
-
-      "y" #'+default/yank-buffer-absolute-path
-
-      :desc "*denote-rename* files" "r" #'denote-dired-rename-files
-      :desc "*denote-rename* using front-matter" "R" #'denote-dired-rename-marked-files-using-front-matter
-      :desc "*denote-rename* with keywords" "w" #'denote-dired-rename-marked-files-with-keywords
-      :desc "*denote-rename* add keywords" "k" #'denote-dired-rename-marked-files-add-keywords
-      :desc "*denote-rename* remove keywords" "K" #'denote-dired-rename-marked-files-remove-keywords
-
-      :desc "*casual-dired* menu" ";" #'casual-dired-tmenu
-      "-" #'nerd-icons-dired-mode
-      "P" #'my/dired-hugo-export-wim-to-md
-      :desc "denote-map" "n" ews-denote-map
-      "M" #'my/diff-mark-toggle-vc-modified
-      "m" #'my/diff-hl-dired-mark-modified
-      )
 ;; (:prefix ("y" . "copy")
 ;;          )
 
@@ -1246,12 +1206,12 @@
 (after! python
   (map! :after python
         (:map python-ts-mode-map
-        ;; :in "<C-f9>" #'treemacs-find-file
-        ;; :in "<M-f9>" #'treemacs-select-window
-        :i "M-9" #'insert-parentheses
-        ;; :i "M-j" #'bk/improve-last-parens
-        :i "M-l" #'sp-forward-sexp
-        "M-RET" #'code-cells-eval)
+         ;; :in "<C-f9>" #'treemacs-find-file
+         ;; :in "<M-f9>" #'treemacs-select-window
+         :i "M-9" #'insert-parentheses
+         ;; :i "M-j" #'bk/improve-last-parens
+         :i "M-l" #'sp-forward-sexp
+         "M-RET" #'code-cells-eval)
         :localleader
         :map python-ts-mode-map
         "'" #'jupyter-repl-associate-buffer
@@ -1866,8 +1826,6 @@
   (map! :map org-mode-map
         :localleader
         "o" nil
-        ;; :desc "@note-map" "n" ews-note-map
-        :desc "@denote-map" "n" ews-denote-map
         ;; :desc "@org-noter-map" "o" ews-org-noter-map
         "o" #'my/denote-howmish-find-file
 

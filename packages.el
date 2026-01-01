@@ -303,7 +303,7 @@
 (package! uuidgen)
 (package! gptel-litellm :recipe (:host github :repo "jwiegley/gptel-litellm"))
 
-(package! macher :recipe (:host github :repo "kmontag/macher"))
+(package! macher)
 
 (package! ragmacs :recipe (:host github :repo "positron-solutions/ragmacs"))
 
@@ -393,8 +393,8 @@
 
 ;; (package! bats-mode) ; shell-scripts
 
-(package! hy-mode :recipe (:host github :repo "jethack23/hy-mode"))
-(package! ob-hy)
+;; (package! hy-mode :recipe (:host github :repo "jethack23/hy-mode"))
+;; (package! ob-hy)
 
 ;; (package! geiser)
 ;; (package! geiser-mit :recipe (:host github :repo "emacsmirror/geiser-mit"))

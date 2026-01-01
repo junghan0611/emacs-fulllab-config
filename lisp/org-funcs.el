@@ -986,29 +986,6 @@ Navigate to files in dired, mark files, and execute command."
 ;; (let ((map global-map))
 ;;     (define-key map (kbd "C-c j g") 'my/get-id-to-clipboard))
 
-;;;;;; split and indirect orgtree
-
-;; copy from writers-dot-spacemaccs
-(defun my/split-and-indirect-orgtree ()
-  "Splits window to the right and opens an org tree section in it"
-  (interactive)
-  (split-window-right)
-  (org-tree-to-indirect-buffer)
-  (windmove-right))
-
-(defun my/kill-and-unsplit-orgtree ()
-  "Kills the cloned buffer and deletes the window."
-  (interactive)
-  (kill-this-buffer)
-  (delete-window))
-
-;;;;;; org-toggle-emphasis-markers
-
-(defun my/org-toggle-emphasis-markers ()
-  (interactive)
-  (setq org-hide-emphasis-markers (not org-hide-emphasis-markers))
-  (font-lock-fontify-buffer :interactively))
-
 ;;;;;; align-comments
 
 (defun my/align-comments (beginning end)

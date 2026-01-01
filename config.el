@@ -1381,15 +1381,6 @@ only those in the selected frame."
 
 
 
-;;;;; olivetti
-
-(use-package! olivetti
-  :after org
-  :custom
-  ;; (olivetti-body-width 0.7) ; nil
-  (olivetti-minimum-body-width 90) ; for compatibility fill-column 80
-  (olivetti-recall-visual-line-mode-entry-state t))
-
 ;;;;; logos
 
 (use-package! logos
@@ -3786,16 +3777,6 @@ only those in the selected frame."
 ;;   ;; (python-mode . symbol-overlay-mode)
 ;;   )
 
-;;;;; git-link
-
-;; 현재 git repo의 homepage link를 clipboard에 넣어준다
-(use-package! git-link
-  :commands (git-link-commit git-link-homepage git-link)
-  :init
-  ;; default is to open the generated link
-  (setq git-link-open-in-browser t)
-  )
-
 ;;;;; sideline-blame
 
 (use-package! sideline-blame
@@ -3811,33 +3792,6 @@ only those in the selected frame."
   :defer t
   :commands git-messenger:popup-message
   :config (setq git-messenger:use-magit-popup t)
-  )
-
-;;;;; emacs-lisp-mode-hook
-
-(add-hook
- 'emacs-lisp-mode-hook
- (lambda ()
-   ;; Emacs' built-in elisp files use a hybrid tab->space indentation scheme
-   ;; with a tab width of 8. Any smaller and the indentation will be
-   ;; unreadable. Since Emacs' lisp indenter doesn't respect this variable it's
-   ;; safe to ignore this setting otherwise.
-   ;; (setq-local tab-width 8)
-   (setq-local comment-column 0)
-   (define-key emacs-lisp-mode-map (kbd "M-[") 'backward-sexp)
-   (define-key emacs-lisp-mode-map (kbd "M-]") 'forward-sexp)))
-
-;;;;; aggressive-indent
-
-(use-package! aggressive-indent
-  :defer 1
-  :if window-system
-  :config
-  (add-hook 'emacs-lisp-mode-hook 'aggressive-indent-mode)
-  (add-hook 'clojure-mode-hook 'aggressive-indent-mode)
-  (add-hook 'scheme-mode-hook 'aggressive-indent-mode)
-  (add-hook 'racket-mode-hook 'aggressive-indent-mode)
-  (add-hook 'hy-mode-hook 'aggressive-indent-mode)
   )
 
 ;;;;; yasnippet Navigation M-n/M-p and hippie-expand M-/
@@ -3946,17 +3900,17 @@ only those in the selected frame."
 ;;;;;; hy : hylang
 
 ;; 0.28 hy-mode, hyuga
-(use-package! hy-mode
-  :mode "\\.hy\\'"
-  :interpreter "hy"
-  ;; :hook ((hy-mode . eglot-ensure))
-  :config
-  (set-repl-handler! 'hy-mode #'hy-shell-start-or-switch-to-shell)
-  (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes '(hy-mode))
-  (when (executable-find "hyuga") ; it's works!
-    (require 'eglot)
-    (set-eglot-client! 'hy-mode '("hyuga")))
-  )
+;; (use-package! hy-mode
+;;   :mode "\\.hy\\'"
+;;   :interpreter "hy"
+;;   ;; :hook ((hy-mode . eglot-ensure))
+;;   :config
+;;   (set-repl-handler! 'hy-mode #'hy-shell-start-or-switch-to-shell)
+;;   (set-formatter! 'lisp-indent #'apheleia-indent-lisp-buffer :modes '(hy-mode))
+;;   (when (executable-find "hyuga") ; it's works!
+;;     (require 'eglot)
+;;     (set-eglot-client! 'hy-mode '("hyuga")))
+;;   )
 
 ;;;;; docker-compose-mode
 
@@ -4397,79 +4351,6 @@ Suitable for `imenu-create-index-function'."
           ("XXXX*" font-lock-constant-face bold) ; XXX
           )))
 
-;;;;; dired
-
-(after! dired
-  (setq dired-make-directory-clickable t) ; Emacs 29.1, doom t
-  (setq dired-free-space nil) ; Emacs 29.1, doom first
-
-  ;; Better dired flags:
-  ;; `-l' is mandatory
-  ;; `-a' shows all files
-  ;; `-h' uses human-readable sizes
-  ;; `-F' appends file-type classifiers to file names (for better highlighting)
-  ;; -g     like -l, but do not list owner
-  (setq dired-listing-switches "-AGFhgv --group-directories-first --time-style=long-iso") ;; doom "-ahl -v --group-directories-first"
-  (setq dired-recursive-copies 'always ; doom 'always
-        dired-dwim-target t) ; doom t
-  (setq dired-ls-F-marks-symlinks t) ; doom nil -F marks links with @
-  (setq delete-by-moving-to-trash t) ; doom nil
-
-  (setq dired-use-ls-dired t)  ; doom t
-  ;; (setq dired-do-revert-buffer t) ; doom nil
-  ;; (setq dired-clean-confirm-killing-deleted-buffers t) ; doom nil
-  ;; (setq dired-kill-when-opening-new-dired-buffer t) ; doom nil
-
-  (require 'wdired)
-  (setq wdired-allow-to-change-permissions t) ; doom nil
-  (setq wdired-create-parent-directories t)
-
-  (add-hook 'dired-mode-hook
-            (lambda ()
-              (interactive)
-              (setq-local truncate-lines t) ; Do not wrap lines
-              ;; (visual-line-mode -1)
-              (hl-line-mode 1)))
-  (remove-hook 'dired-mode-hook 'dired-omit-mode)
-  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
-
-  ;; prot-dired-grep-marked-files
-  (require 'prot-dired)
-
-;;;###autoload
-  (defun +default/yank-buffer-absolute-path (&optional root)
-    "Copy the current buffer's absolute path to the kill ring."
-    (interactive)
-    (if-let* ((filename (or (buffer-file-name (buffer-base-buffer))
-                            (bound-and-true-p list-buffers-directory))))
-        (let ((path (expand-file-name  ; abbreviate-file-name 대신 expand-file-name 사용
-                     (if root
-                         (file-relative-name filename root)
-                       filename))))
-          (kill-new path)
-          (if (string= path (car kill-ring))
-              (message "Copied absolute path: %s" path)
-            (user-error "Couldn't copy filename in current buffer")))
-      (error "Couldn't find filename in current buffer")))
-  )
-
-;;;;; dired-preview
-
-(use-package! dired-preview
-  :after dired
-  :commands dired-preview
-  :init
-  (setq dired-preview-delay 0.7)
-  (setq dired-preview-max-size (expt 2 20)) ;; => 1048576
-  (defun my-dired-preview-to-the-right ()
-    "My preferred `dired-preview-display-action-alist-function'."
-    '((display-buffer-in-side-window)
-      (side . right)
-      (width . 0.5)))
-  ;; default' dired-preview-display-action-alist-dwim
-  (setq dired-preview-display-action-alist-function #'my-dired-preview-to-the-right)
-  )
-
 ;;;;; DONT nerd-icons-dired
 
 ;; (use-package! nerd-icons-dired
@@ -4545,21 +4426,6 @@ Suitable for `imenu-create-index-function'."
 ;;;;; :app calendar
 
 ;; calendar
-
-;;;;; :app emms
-
-;; emms
-
-;; A media player for music no one's heard of
-
-;; (after! emms
-;;   (emms-mpris-enable)
-;;   (emms-source-file-default-directory ews-music-directory)
-;;   (emms-browser-covers #'emms-browser-cache-thumbnail-async)
-;;   (("<XF86AudioPrev>" . emms-previous)
-;;    ("<XF86AudioNext>" . emms-next)
-;;    ("<XF86AudioPlay>" . emms-pause))
-;;   )
 
 ;;;;; :app @yeetube
 
@@ -6606,7 +6472,6 @@ Suitable for `imenu-create-index-function'."
 
 ;;;;; recent-rgrep - search
 
-;; $ recent-rgrep -f '*.org' 'happy to see you'
 (use-package! recent-rgrep
   :defer t
   :commands (recent-rgrep))
@@ -6687,83 +6552,83 @@ Suitable for `imenu-create-index-function'."
   (macher-install)
   (load! "+magit"))
 
-(progn
-  ;; [[denote:20250724T220236][#LLM: ◊diff-apply-unk Git 스타일 패치에서 새 파일 디렉토리 생성]]
-  (defun my/diff-apply-hunk-with-file-creation ()
-    "현재 hunk를 적용하면서, 필요한 디렉터리·파일을 자동으로 생성한다."
-    (interactive)
-    (save-excursion
-      (pcase-let* ((`(,old ,new) (my/diff--old-new-files))
-                   (target (if (string= old "/dev/null") new old))
-                   ;; b/ 접두사 제거 후 절대경로
-                   (target-path (expand-file-name target)))
-        (cond
-         ;; 1) 새 파일 추가(/dev/null → 실제 파일)
-         ((string= old "/dev/null")
-          (unless (file-directory-p (file-name-directory target-path))
-            (when (y-or-n-p (format "Directory `%s' does not exist! Create it? "
-                                    (file-name-directory target-path)))
-              (make-directory (file-name-directory target-path) t)))
-          (unless (file-exists-p target-path)
-            (write-region "" nil target-path))
-          (diff-apply-hunk))           ; 실제 패치 적용
+;; (progn
+;;   ;; [[denote:20250724T220236][#LLM: ◊diff-apply-unk Git 스타일 패치에서 새 파일 디렉토리 생성]]
+;;   (defun my/diff-apply-hunk-with-file-creation ()
+;;     "현재 hunk를 적용하면서, 필요한 디렉터리·파일을 자동으로 생성한다."
+;;     (interactive)
+;;     (save-excursion
+;;       (pcase-let* ((`(,old ,new) (my/diff--old-new-files))
+;;                    (target (if (string= old "/dev/null") new old))
+;;                    ;; b/ 접두사 제거 후 절대경로
+;;                    (target-path (expand-file-name target)))
+;;         (cond
+;;          ;; 1) 새 파일 추가(/dev/null → 실제 파일)
+;;          ((string= old "/dev/null")
+;;           (unless (file-directory-p (file-name-directory target-path))
+;;             (when (y-or-n-p (format "Directory `%s' does not exist! Create it? "
+;;                                     (file-name-directory target-path)))
+;;               (make-directory (file-name-directory target-path) t)))
+;;           (unless (file-exists-p target-path)
+;;             (write-region "" nil target-path))
+;;           (diff-apply-hunk))           ; 실제 패치 적용
 
-         ;; 2) 파일 삭제(실제 파일 → /dev/null)
-         ((string= new "/dev/null")
-          (when (y-or-n-p (format "Delete file `%s'? " old))
-            (diff-apply-hunk)))
+;;          ;; 2) 파일 삭제(실제 파일 → /dev/null)
+;;          ((string= new "/dev/null")
+;;           (when (y-or-n-p (format "Delete file `%s'? " old))
+;;             (diff-apply-hunk)))
 
-         ;; 3) 기존 파일 수정
-         (t
-          (diff-apply-hunk))))))
+;;          ;; 3) 기존 파일 수정
+;;          (t
+;;           (diff-apply-hunk))))))
 
-;; gemini 2.5 pro
-(defun my/diff-apply-hunk-create-new-file (orig-fun &rest args)
-  "Create directory and file for new files in Git-style patches.
+;; ;; gemini 2.5 pro
+;; (defun my/diff-apply-hunk-create-new-file (orig-fun &rest args)
+;;   "Create directory and file for new files in Git-style patches.
 
-This function is intended to be used as an :around advice for
-`diff-apply-hunk`.
+;; This function is intended to be used as an :around advice for
+;; `diff-apply-hunk`.
 
-When applying a hunk for a new file (e.g., a diff from
-/dev/null to b/path/to/new-file), this function first
-creates the necessary parent directories and an empty file at the
-target path. It then calls the original `diff-apply-hunk`
-function to apply the changes."
-  ;; In a diff buffer, `default-directory` is usually set to the
-  ;; project root, so relative paths should work correctly.
-  (let ((file-names (diff-hunk-file-names)))
-    (when (and (listp file-names)
-               (stringp (car file-names))
-               (string-equal "/dev/null" (car file-names))
-               (stringp (cadr file-names)))
-      (let* ((new-file-git-path (cadr file-names))
-             ;; Strip the "b/" prefix from git diff paths.
-             (target-file (if (string-prefix-p "b/" new-file-git-path)
-                              (substring new-file-git-path 2)
-                            new-file-git-path))
-             (target-dir (file-name-directory target-file)))
+;; When applying a hunk for a new file (e.g., a diff from
+;; /dev/null to b/path/to/new-file), this function first
+;; creates the necessary parent directories and an empty file at the
+;; target path. It then calls the original `diff-apply-hunk`
+;; function to apply the changes."
+;;   ;; In a diff buffer, `default-directory` is usually set to the
+;;   ;; project root, so relative paths should work correctly.
+;;   (let ((file-names (diff-hunk-file-names)))
+;;     (when (and (listp file-names)
+;;                (stringp (car file-names))
+;;                (string-equal "/dev/null" (car file-names))
+;;                (stringp (cadr file-names)))
+;;       (let* ((new-file-git-path (cadr file-names))
+;;              ;; Strip the "b/" prefix from git diff paths.
+;;              (target-file (if (string-prefix-p "b/" new-file-git-path)
+;;                               (substring new-file-git-path 2)
+;;                             new-file-git-path))
+;;              (target-dir (file-name-directory target-file)))
 
-        ;; Create parent directories if they don't exist.
-        (when (and target-dir (not (file-directory-p target-dir)))
-          (make-directory target-dir 'parents))
+;;         ;; Create parent directories if they don't exist.
+;;         (when (and target-dir (not (file-directory-p target-dir)))
+;;           (make-directory target-dir 'parents))
 
-        ;; Create an empty file to apply the hunk to.
-        (unless (file-exists-p target-file)
-          (with-temp-file target-file
-            ;; This creates an empty file at the path `target-file`.
-            nil)))))
+;;         ;; Create an empty file to apply the hunk to.
+;;         (unless (file-exists-p target-file)
+;;           (with-temp-file target-file
+;;             ;; This creates an empty file at the path `target-file`.
+;;             nil)))))
 
-  ;; Always call the original function to perform the actual patch application.
-  ;; For new files, it will now find the created empty file.
-  ;; For existing files or deletions, it will work as before.
-  (apply orig-fun args))
+;;   ;; Always call the original function to perform the actual patch application.
+;;   ;; For new files, it will now find the created empty file.
+;;   ;; For existing files or deletions, it will work as before.
+;;   (apply orig-fun args))
 
-;; Activate the custom behavior by advising `diff-apply-hunk`.
-(advice-add 'diff-apply-hunk :around #'my/diff-apply-hunk-create-new-file)
+;; ;; Activate the custom behavior by advising `diff-apply-hunk`.
+;; (advice-add 'diff-apply-hunk :around #'my/diff-apply-hunk-create-new-file)
 
-;; To disable this behavior, you can run:
-;; (advice-remove 'diff-apply-hunk #'my/diff-apply-hunk-create-new-file)
-  )
+;; ;; To disable this behavior, you can run:
+;; ;; (advice-remove 'diff-apply-hunk #'my/diff-apply-hunk-create-new-file)
+;;   )
 
 ;;;; linenote
 
@@ -7158,6 +7023,51 @@ function to apply the changes."
                                :family (fontaine--get-preset-property
                                         fontaine-current-preset :term-family))))
   (add-hook 'vterm-mode-hook #'my/vterm-setup-terminal-font)
+  )
+
+;;; Load libraries via require (prevents duplicate loading)
+
+(progn
+  (add-to-list 'load-path (concat "~/repos/gh/doomemacs-config/lisp"))
+
+  (require 'ui-config)
+  (require 'evil-config)
+  (require 'korean-input)
+  (require 'time-config)
+  (require 'completion-config)
+
+  (require 'module-emacs-config)
+
+  (require 'org-config)
+  (require 'denote-config)
+  (require 'denote-silo-config)
+  (require 'denote-export-config)
+  (require 'org-functions)
+  (require 'denote-functions)
+  (require 'unicode-config)
+  (require 'editing-config)
+  (require 'ai-gptel)
+  (require 'ai-agent-shell)            ; acp 설정
+  ;; (require 'ai-gptel-acp)           ; gptel + ACP 통합 (doom-md7)
+  (require 'ai-stt-eca-whisper)
+  (require 'ai-tts-edge)
+
+  (require 'modeline-config)
+  (require 'tab-bar-config)
+
+  (require 'prog-mode-config)
+  (require 'utils-config)
+  (require 'project-config)
+  (require 'eaf-config)                ; EAF (조건부 로딩)
+  (require 'elfeed-config)             ; elfeed + elfeed-tube
+  (require 'ai-orchestration)          ; efrit/beads (조건부 로딩)
+  (require 'tmux-config)               ; tmux + claude code orchestration
+  (require 'zellij-config)             ; zellij terminal multiplexer
+  (require 'search-config)             ; recent-rgrep 등 검색 도구
+  (require 'keybindings-config)
+  (require 'keybindings-denote-config)
+  (require 'termux-config)
+
   )
 
 ;;; left blank on purpose
