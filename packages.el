@@ -107,6 +107,7 @@
 (package! major-mode-hydra)
 
 (package! modus-themes)
+(package! ef-themes)
 (package! doric-themes)
 
 (package! show-font)
