@@ -158,6 +158,7 @@
 (package! translate-mode)
 (package! separedit :recipe (:host github :repo "twlz0ne/separedit.el"))
 (package! goto-last-change)
+(package! pinentry)
 
 ;;;; :lang org-mode
 
@@ -224,17 +225,13 @@
 
 ;; (package! hypothesis :recipe (:host github :repo "EFLS/hypothesis"))
 (package! side-notes)
-(package! redacted)
-(package! centered-cursor-mode)
 
 (package! google-translate)
 (package! jinx)
 (package! logos)
-(package! olivetti)
 (package! palimpsest)
 (package! immersive-translate)
 ;; (package! immersive-translate :recipe (:local-repo "~/git/clone/emacs-immersive-translate/"))
-(package! focus)
 
 (package! isbn :recipe (:host github :repo "cashpw/isbn.el"))
 
