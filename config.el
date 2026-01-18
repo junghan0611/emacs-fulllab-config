@@ -3294,22 +3294,6 @@ only those in the selected frame."
    (append org-babel-load-languages '((gptel . t))))
   )
 
-;;;;;; gptel-prompt
-
-(after! gptel
-  (require 'gptel-prompts)
-  (setq gptel-prompts-directory (concat org-directory "resources/prompts/"))
-
-  (gptel-prompts-update)
-  ;; Ensure prompts are updated if prompt files change
-  (gptel-prompts-add-update-watchers)
-
-  (use-package! uuidgen)
-
-  (require 'gptel-litellm)
-  (gptel-litellm-install-sessions)
-  )
-
 ;;;;; llmclient: emigo
 
 ;; (use-package! emigo
@@ -4367,26 +4351,6 @@ Suitable for `imenu-create-index-function'."
          ("v" . 'yeetube-mpv-toggle-video)
          ("V" . 'yeetube-mpv-toggle-no-video-flag)
          ("k" . 'yeetube-remove-saved-video)))
-
-
-;;;;; :app rss
-
-;; (rss +org +youtube)        ; emacs as an RSS reader
-
-;; gc copy-link
-(after! elfeed
-  ;; +rss-enable-sliced-images ;  default t
-  (setq rmh-elfeed-org-files (list (my/org-elfeed-file))) ; default ~/org/elfeed.org
-  ;; org-directory
-  (setq elfeed-search-filter "") ; "@6-months-ago") ;;  "@1-month-ago +unread"
-  (setq elfeed-search-title-max-width 90) ; default 70
-  ;; (add-hook 'elfeed-search-mode-hook #'elfeed-update)
-  )
-
-(after! elfeed-tube
-  (require 'elfeed-tube)
-  ;; (setq elfeed-tube-invidious-url "https://vid.puffyan.us")
-  (setq elfeed-tube-captions-languages '("en" "ko" "englsh (auto generated)")))
 
 ;;;;; DONT :app @mastodon
 
@@ -6872,10 +6836,13 @@ Suitable for `imenu-create-index-function'."
   (require 'denote-export-config)
   (require 'org-functions)
   (require 'denote-functions)
+
   (require 'unicode-config)
   (require 'editing-config)
+
   (require 'ai-gptel)
   (require 'ai-agent-shell)            ; acp 설정
+
   ;; (require 'ai-gptel-acp)           ; gptel + ACP 통합 (doom-md7)
   (require 'ai-stt-eca-whisper)
   (require 'ai-tts-edge)
@@ -6884,6 +6851,8 @@ Suitable for `imenu-create-index-function'."
   (require 'tab-bar-config)
 
   (require 'prog-mode-config)
+  (require 'sks-hub-nav)                 ; SKS Hub Zig 상태머신 네비게이션
+  (require 'android-config)              ; Android/Kotlin 개발 환경
   (require 'utils-config)
   (require 'project-config)
   (require 'eaf-config)                ; EAF (조건부 로딩)
@@ -6895,7 +6864,7 @@ Suitable for `imenu-create-index-function'."
   (require 'keybindings-config)
   (require 'keybindings-denote-config)
   (require 'termux-config)
-
+  (require 'functions)
   )
 
 ;;; left blank on purpose

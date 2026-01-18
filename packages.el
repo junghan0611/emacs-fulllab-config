@@ -291,19 +291,19 @@
 ;;            :files (:defaults "awk" "demo.org")))
 ;;;; modules/tools llm
 
-(package! mcp)
-(package! yaml) ; for gptel-prompt
-(package! templatel) ; for gptel-prompt
+(unpin! gptel)
+(package! macher)
+(package! uuidgen) ; for gptel-prompt
 (package! gptel-prompt :recipe (:host github :repo "jwiegley/gptel-prompts"))
-(package! ob-prompt :recipe (:host github :repo "jwiegley/ob-gptel"))
-(package! gptel-rag :recipe (:host github :repo "jwiegley/gptel-rag"))
-
-(package! uuidgen)
+(package! yaml)      ; for .poet templates
+(package! templatel) ; for .poet templates (Jinja2-like)
 (package! gptel-litellm :recipe (:host github :repo "jwiegley/gptel-litellm"))
 
-(package! macher)
-
 (package! ragmacs :recipe (:host github :repo "positron-solutions/ragmacs"))
+
+(package! mcp)
+(package! ob-prompt :recipe (:host github :repo "jwiegley/ob-gptel"))
+(package! gptel-rag :recipe (:host github :repo "jwiegley/gptel-rag"))
 
 ;; (package! gpt-babel :recipe (:host github :repo "ElleNajt/gpt-babel" :branch "main" :files ("*.el")))
 ;; (package! gpt-babel :recipe (:local-repo "~/git/default/gpt-babel/"))
@@ -422,6 +422,7 @@
 
 (package! yeetube :recipe (:host github :repo "Boruch-Baum/emacs-yeetube.el"))
 (package! youtube-sub-extractor)
+;; (package! simple-httpd)  ; elfeed-web 의존성
 
 (package! elfeed-tube-mpv)
 ;; (package! elfeed-webkit) ; not working on ubuntu

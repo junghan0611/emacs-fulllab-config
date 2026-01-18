@@ -888,16 +888,6 @@ Navigate to files in dired, mark files, and execute command."
 
 ;;;;; org funcs
 
-
-;;;;;; org-open-at-point-other-window
-
-;; ohyecloudy-dot-doom/doom.d/config.org
-;;;;;###autoload
-(defun my/org-open-at-point-other-window ()
-  (interactive)
-  (let ((org-link-frame-setup (cons (cons 'file 'find-file-other-window) org-link-frame-setup)))
-    (org-open-at-point)))
-
 ;;;;;; repeated words
 
 (defun my/the-the ()
@@ -1010,14 +1000,6 @@ active call comment-or-uncomment-region, otherwise just insert the given char."
   "Indent buffer."
   (interactive)
   (indent-region (point-min) (point-max)))
-
-;;;;;; org-indent-src-block
-
-(defun my/org-indent-src-block ()
-  (interactive)
-  (org-edit-special)
-  (my/indent-buffer)
-  (org-edit-src-exit))
 
 ;;;;;; org-sort-by-priority
 
