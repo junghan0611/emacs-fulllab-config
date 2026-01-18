@@ -332,6 +332,7 @@
 (package! agent-shell :recipe (:host github :repo "xenodium/agent-shell"))
 (package! agent-shell-manager :recipe (:host github :repo "ElleNajt/agent-shell-manager"))
 (package! agent-shell-sidebar :recipe (:host github :repo "cmacrae/agent-shell-sidebar"))
+(package! minuet :recipe (:host github :repo "ElleNajt/minuet-ai.el"))
 
 ;;;;; extra packages
 
