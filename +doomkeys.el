@@ -1841,7 +1841,6 @@
         :desc "insert-inactive-timestamp" "2" #'bh/insert-inactive-timestamp
         "m" #'org-babel-tangle
         :desc "focus-mode" "3" #'focus-mode
-        :desc "org-appear-mode" "4" #'org-appear-mode
 
         :desc "insert checkbox\|bracket" "]" #'cae-org-insert-checkbox-or-bracket
         :desc "convert syntax to lower" "L" #'cae-org-syntax-convert-keyword-case-to-lower
