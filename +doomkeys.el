@@ -1835,6 +1835,7 @@
         "M-;" #'my/add-to-glossary
         "M-'" #'my/add-newlines-between-paragraphs
         "M-l" #'my/link-to-headline
+        "M-r" #'my/refile-heading-to-denote-file
 
         :desc "org-set-effot" "E" #'org-set-effort
         :desc "time-stamp" "1" #'time-stamp
